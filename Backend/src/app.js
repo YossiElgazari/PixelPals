@@ -1,27 +1,23 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
+const connectDB = require('./config/db');
+const userRoutes = require('./routes/userRoutes');
 
-// Load environment variables; handle potential error
-const env = dotenv.config();
-if (env.error) {
-    throw new Error("Failed to load the .env file");
-}
 
-const port = process.env.PORT || 3000; // Fallback to default port if not specified
+connectDB();
+
 const app = express();
+const port = process.env.PORT || 3000;
 
-// Connect to MongoDB
-mongoose.connect(process.env.DATABASE_URL)
-    .then(() => console.log('Connected to DB'))
-    .catch(err => console.error("Could not connect to DB", err));
+app.use(express.json()); 
 
-// Define a route
+
+app.use('/users', userRoutes);
+
+
 app.get('/', (req, res) => {
-    res.send('Hello, world!!!');
+    res.send('Hello, PixelPals!');
 });
 
-// Start the server
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
