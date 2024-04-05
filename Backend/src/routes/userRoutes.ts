@@ -1,6 +1,5 @@
 import express from 'express';
-import { register, login, getUserProfile, updateUserProfile } from '../controllers/userController';
-import { protect } from '../middlewares/authMiddleware';
+import { register, login } from '../controllers/userController';
 
 const router = express.Router();
 
@@ -9,11 +8,5 @@ router.post('/register', register);
 
 // Login endpoint
 router.post('/login', login);
-
-// Profile endpoint
-router.get('/profile', protect, getUserProfile);
-
-// Profile update endpoint
-router.put('/profile', protect, updateUserProfile);
 
 export default router;

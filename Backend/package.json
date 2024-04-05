@@ -4,7 +4,7 @@
   "description": "Backend of the site",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./src/app.ts",
+    "start": "nodemon --exec ts-node --project tsconfig.json ./src/app.ts",
     "dev": "nodemon ./src/app.ts",
     "test": "jest --detectOpenHandles --forceExit",
     "lint": "eslint . --ext .ts"
@@ -20,11 +20,16 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/methods": "^1.1.4",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "eslint": "^8.57.0",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
+    "supertest": "^6.3.4",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   }

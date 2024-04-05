@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.register = void 0;
+exports.updateUserProfile = exports.getUserProfile = exports.login = exports.register = void 0;
 const userModel_1 = __importDefault(require("../models/userModel"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -67,4 +67,42 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield userModel_1.default.findById(req.user._id).select('-passwordHash');
+    if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+    }
+    res.json(user);
+});
+exports.getUserProfile = getUserProfile;
+const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield userModel_1.default.findById(req.user._id);
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        user.username = req.body.username || user.username;
+        user.email = req.body.email || user.email;
+        if (req.body.password) {
+            user.passwordHash = req.body.password;
+        }
+        const updatedUser = yield user.save();
+        res.json({
+            _id: updatedUser._id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+        });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ message: "Error message", error: error.message });
+        }
+        else {
+            res.status(500).json({ message: "An unknown error occurred" });
+        }
+    }
+});
+exports.updateUserProfile = updateUserProfile;
 //# sourceMappingURL=userController.js.map
