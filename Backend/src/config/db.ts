@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 // Load environment variables; handle potential error
 const env = dotenv.config();
@@ -7,19 +7,19 @@ if (env.error) {
     throw new Error("Failed to load the .env file");
 }
 
-// Extract the DATABASE_URL from process.env
-const { DATABASE_URL } = process.env;
+// Assert that DATABASE_URL is set
+const DATABASE_URL = process.env.DATABASE_URL!;
 
 // A function to connect to the database
-const connectDB = async () => {
+const connectDB = async (): Promise<void> => {
   try {
     await mongoose.connect(DATABASE_URL);
     console.log('MongoDB Connection Established...');
   } catch (err) {
-    console.error('Database connection failed:', err.message);
+    console.error('Database connection failed:', (err as Error).message);
     // Exit process with failure
     process.exit(1);
   }
 };
 
-module.exports = connectDB;
+export default connectDB;
