@@ -1,22 +1,13 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import postController from '../controllers/postController';
+import { protect } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
-router.post('/posts', (req: Request, res: Response) => {
-    // Handle the post request here
-    // You can access the request body using req.body
-    // You can send a response using res.send() or res.json()
+// Create a new post
+router.post('/posts', protect, postController.createPost);
 
-    // Example: Create a new post
-    const { title, content } = req.body;
-    const newPost = {
-        title,
-        content,
-        createdAt: new Date(),
-    };
-
-    // Send a response with the new post
-    res.json(newPost);
-});
+// Like a post
+router.post('/posts/:postId/like', protect, postController.likePost);
 
 export default router;
