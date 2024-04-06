@@ -15,12 +15,8 @@ app.get('/', (req: Request, res: Response): void => {
     res.send('Hello, PixelPals!');
 });
 
-const server = app.listen(port, (): void => {
+app.listen(port, (): void => {
   console.log(`Server is running on port ${port}`);
-});
-
-afterAll(() => {
-  server.close();
 });
 
 export default app;

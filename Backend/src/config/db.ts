@@ -17,13 +17,8 @@ const connectDB = async (): Promise<void> => {
     console.log('MongoDB Connection Established...');
   } catch (err) {
     console.error('Database connection failed:', (err as Error).message);
-    // Exit process with failure
     process.exit(1);
   }
 };
-
-afterAll(() => {
-  mongoose.disconnect();
-});
 
 export default connectDB;

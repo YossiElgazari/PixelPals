@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 
 
 export interface IUser extends Document {
+  _id: string;
   username: string;
   email: string;
   passwordHash: string;
@@ -11,7 +12,7 @@ export interface IUser extends Document {
   isValidPassword(password: string): Promise<boolean>;
 }
 
-const userSchema: Schema = new Schema({
+const userSchema = new Schema<IUser>({
   username: {
     type: String,
     required: true,
