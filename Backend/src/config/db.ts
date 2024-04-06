@@ -22,4 +22,8 @@ const connectDB = async (): Promise<void> => {
   }
 };
 
+afterAll(() => {
+  mongoose.disconnect();
+});
+
 export default connectDB;

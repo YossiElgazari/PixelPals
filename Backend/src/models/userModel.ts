@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-// Interface to describe a user document
+
 export interface IUser extends Document {
   username: string;
   email: string;
@@ -40,7 +40,7 @@ const userSchema: Schema = new Schema({
   },
 }, { timestamps: true });
 
-// Password hash middleware
+
 userSchema.pre<IUser>('save', async function(next) {
   if (!this.isModified('passwordHash')) return next();
 
@@ -53,7 +53,7 @@ userSchema.pre<IUser>('save', async function(next) {
   }
 });
 
-// Helper method for validating user's password
+
 userSchema.methods.isValidPassword = async function(password: string): Promise<boolean> {
   return bcrypt.compare(password, this.passwordHash);
 };
