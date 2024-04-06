@@ -4,7 +4,7 @@
   "description": "Backend of the site",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon --exec ts-node --project tsconfig.json ./src/app.ts",
+    "start": "nodemon --watch ./src --ext ts --exec ts-node ./src/app.ts",
     "dev": "nodemon ./src/app.ts",
     "test": "jest --detectOpenHandles --forceExit",
     "lint": "eslint . --ext .ts"

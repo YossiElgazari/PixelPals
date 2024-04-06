@@ -1,1 +1,59 @@
-node_modules
+# Dependency folders
+/node_modules
+/npm-debug.log
+/yarn-error.log
+
+# Built files
+/build
+/dist
+
+# Dependency lock files
+yarn.lock
+package-lock.json
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment-specific files
+.env
+.env.local
+
+# Logs
+*.log
+
+# Firebase configuration files
+/firebaseConfig.json
+
+# Firebase Cloud Functions
+/functions/node_modules
+
+# API keys or sensitive information
+/api_keys.json
+
+# Android build
+android/app/build
+
+# iOS build
+ios/build
+
+# Gradle files
+android/.gradle
+android/app/.externalNativeBuild
+android/captures
+android/local.properties
+
+# Xcode files
+ios/*.xcworkspace
+ios/*.xcodeproj
+ios/Pods
+
+# TypeScript build artifacts
+*.tsbuildinfo
+*.js
+*.js.map
+
+# Miscellaneous
+.DS_Store
+*.tmp
+*.bak
