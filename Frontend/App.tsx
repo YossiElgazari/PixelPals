@@ -4,11 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './components/loginScreen';
 import RegisterScreen from './components/registerScreen';
-import HomeScreen from './components/homeScreen';
-import ProfileScreen from './components/profileScreen';
-import { RootStackParamList } from './types';
+import BottomTabNavigator from './components/bottomTabNavigator'; // Note this import
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
@@ -16,8 +14,7 @@ const App = () => {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Home" component={BottomTabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
