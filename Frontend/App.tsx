@@ -2,10 +2,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './screens/loginScreen';
-import RegisterScreen from './screens/registerScreen';
-import HomeScreen from './screens/homeScreen';
-import ProfileScreen from './screens/profileScreen';
+import LoginScreen from './components/loginScreen';
+import RegisterScreen from './components/registerScreen';
+import HomeScreen from './components/homeScreen';
+import ProfileScreen from './components/profileScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

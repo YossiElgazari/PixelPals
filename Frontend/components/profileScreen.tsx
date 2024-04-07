@@ -9,11 +9,11 @@ type Props = {
 };
 
 const ProfileScreen: React.FC<Props> = ({ navigation }) => {
-  // Mock user data - replace this with actual data from your backend or state management
+  // replace data from backend or state management
   const userInfo = {
     username: 'JohnDoe',
     email: 'johndoe@example.com'
-    // Add any other user info you'd like to display
+
   };
 
   return (
@@ -27,7 +27,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         title="Edit Profile"
         onPress={() => {
           // Placeholder for edit profile action
-          // This could navigate to an EditProfileScreen or open an edit modal
+          //  could navigate to an EditProfileScreen or open an edit modal
         }}
       />
     </View>

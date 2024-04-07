@@ -19,7 +19,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       />
       <Button
         title="Login"
-        onPress={() => navigation.replace('Home')} // Use replace to prevent going back to login screen after logging in
+        onPress={() => navigation.replace('Home')} 
       />
     </View>
   );

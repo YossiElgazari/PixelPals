@@ -12,10 +12,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Home Screen</Text>
-      {/* Display the home content */}
+      {/* home content */}
       <Button
         title="Logout"
-        onPress={() => navigation.replace('Login')} // Use replace to prevent going back after logging out
+        onPress={() => navigation.replace('Login')} 
       />
     </View>
   );
