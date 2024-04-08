@@ -1,4 +1,3 @@
-// screens/SearchScreen.tsx
 import React, { useState } from 'react';
 import { View, TextInput, FlatList, StyleSheet } from 'react-native';
 
