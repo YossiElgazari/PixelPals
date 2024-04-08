@@ -15,7 +15,7 @@ package-lock.json
 .vscode/
 .idea/
 
-# Environment-specific files
+
 .env
 .env.local
 
