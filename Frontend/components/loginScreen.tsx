@@ -12,14 +12,14 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Login Screen</Text>
-      {/* Add TextInput for username and password */}
+      {/*  TextInput for username and password */}
       <Button
         title="Go to Registration"
         onPress={() => navigation.navigate('Register')}
       />
       <Button
         title="Login"
-        onPress={() => navigation.replace('Home')} 
+        onPress={() => navigation.navigate('Home')} 
       />
     </View>
   );

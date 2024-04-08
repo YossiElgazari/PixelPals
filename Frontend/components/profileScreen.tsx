@@ -1,53 +1,95 @@
 // screens/ProfileScreen.tsx
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types';
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'>;
-};
-
-const ProfileScreen: React.FC<Props> = ({ navigation }) => {
-  // replace data from backend or state management
+const ProfileScreen = () => {
+  // Dummy data 
   const userInfo = {
-    username: 'JohnDoe',
-    email: 'johndoe@example.com'
-
+    username: 'thegeek',
+    profileImageUrl: require('../assets/defaultprofile.jpg'),
+    postsCount: 123,
+    followersCount: 440,
+    followingCount: 558,
+    bio: 'Journalist\nTech journalist and city',
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Profile Screen</Text>
-      <Text style={styles.userInfo}>Username: {userInfo.username}</Text>
-      <Text style={styles.userInfo}>Email: {userInfo.email}</Text>
-      {/* Add more user info fields as necessary */}
-      
-      <Button
-        title="Edit Profile"
-        onPress={() => {
-          // Placeholder for edit profile action
-          //  could navigate to an EditProfileScreen or open an edit modal
-        }}
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <View style={styles.profileHeader}>
+          <Image source={userInfo.profileImageUrl} style={styles.profileImage} />
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{userInfo.postsCount}</Text>
+              <Text style={styles.statLabel}>Posts</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{userInfo.followersCount}</Text>
+              <Text style={styles.statLabel}>Followers</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{userInfo.followingCount}</Text>
+              <Text style={styles.statLabel}>Following</Text>
+            </View>
+          </View>
+        </View>
+        <Text style={styles.username}>{userInfo.username}</Text>
+        <Text style={styles.bio}>{userInfo.bio}</Text>
+        {/* Buttons for Edit Profileq and Settings */}
+        {/* Grid of posts */}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#121212',
+  },
+  profileHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 15,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: 'white',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  text: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  statItem: {
+    alignItems: 'center',
+    marginHorizontal: 10,
   },
-  userInfo: {
-    fontSize: 16,
-    marginBottom: 10,
+  statNumber: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  statLabel: {
+    color: 'grey',
+    fontSize: 14,
+  },
+  username: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+    paddingHorizontal: 15,
+    marginTop: 10,
+  },
+  bio: {
+    color: 'white',
+    fontSize: 14,
+    paddingHorizontal: 15,
   },
 });
 
