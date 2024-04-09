@@ -1,6 +1,6 @@
 import { Response } from "express";
 import BaseController from "./baseController";
-import { AuthRequest } from "./userController";
+import { AuthRequest } from "../middlewares/authMiddleware";
 import Post, { IPost } from "../models/postModel";
 
 class PostController extends BaseController<IPost> {
@@ -14,8 +14,8 @@ class PostController extends BaseController<IPost> {
             const { content, photo } = req.body;
 
             // Validate request body
-            if (!content || !photo) {
-                return res.status(400).json({ message: "Content and photo are required." });
+            if (!content) {
+                return res.status(400).json({ message: "Content is required." });
             }
 
             // Create new post with user ID

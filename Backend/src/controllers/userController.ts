@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import User from '../models/userModel';
-import { IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
+import BaseController from './baseController';
+import { IUser } from '../models/userModel';
 
 interface ReqBody {
   username: string;
@@ -9,88 +10,77 @@ interface ReqBody {
   password: string;
 }
 
-export const register = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { username, email, password } = req.body as ReqBody;
-
-    let user = await User.findOne({ email });
-    if (user) {
-      res.status(400).json({ message: "User already exists" });
-      return;
+class UserController extends BaseController<IUser> {
+    constructor() {
+        super(User);
     }
+  
 
-    user = new User({
-      username,
-      email,
-      passwordHash: password,
-    });
-
-    await user.save();
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: "Error message", error: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred" });
-    }
-  }  
-};
-
-export const login = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { email, password } = req.body as ReqBody;
-      
-      const user = await User.findOne({ email });
-      if (!user) {
-        res.status(401).json({ message: "Invalid email or password" });
-        return;
-      }
-      
-      const isMatch = await user.isValidPassword(password);
-      if (!isMatch) {
-        res.status(401).json({ message: "Invalid email or password" });
-        return;
-      }
-      
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
-      res.status(200).send({ "token": token });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(500).json({ message: "Error message", error: error.message });
-      } else {
-        res.status(500).json({ message: "An unknown error occurred" });
-      }
-    }
+    async register(req: Request, res: Response): Promise<void> {
+      try {
+        const { username, email, password } = req.body as ReqBody;
     
-};
-
-export const logout = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: "User logged out successfully" });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: "Error message", error: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred" });
+        let user = await User.findOne({ email });
+        if (user) {
+          res.status(400).json({ message: "User already exists" });
+          return;
+        }
+    
+        user = new User({
+          username,
+          email,
+          passwordHash: password,
+        });
+    
+        await user.save();
+        res.status(201).json({ message: "User registered successfully" });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          res.status(500).json({ message: "Error message", error: error.message });
+        } else {
+          res.status(500).json({ message: "An unknown error occurred" });
+        }
+      }  
     }
-  }
-};
-
-export type AuthRequest = Request & { user: { _id: string } };
-
-export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) {
-    return res.sendStatus(401);
-  }
-  jwt.verify(token,process.env.JWT_SECRET, (err, data: jwt.JwtPayload) => {
-    if (err) {
-      return res.sendStatus(403);
+  
+    async login(req: Request, res: Response): Promise<void> {
+      try {
+        const {username, password } = req.body as ReqBody;
+        
+        const user = await User.findOne({ username });
+        if (!user) {
+          res.status(401).json({ message: "Invalid username or password" });
+          return;
+        }
+        
+        const isMatch = await user.isValidPassword(password);
+        if (!isMatch) {
+          res.status(401).json({ message: "Invalid username or password" });
+          return;
+        }
+        
+        const token = jwt.sign({ "_id": user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).send({ "token": token });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          res.status(500).json({ message: "Error message", error: error.message });
+        } else {
+          res.status(500).json({ message: "An unknown error occurred" });
+        }
+      }
     }
-    const id = data.userId;
-    req.user = { _id: id} as IUser;
-    return next();
-  })
+  
+    async logout(req: Request, res: Response): Promise<void> {
+      try {
+        res.status(200).json({ message: "User logged out successfully" });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          res.status(500).json({ message: "Error message", error: error.message });
+        } else {
+          res.status(500).json({ message: "An unknown error occurred" });
+        }
+      }
+    }
 }
 
+export default new UserController();

@@ -1,56 +1,12 @@
 
 
+
+
 POST http://localhost:3000/users/register
 Content-Type: application/json
 
 {
-    "username": "test",
-    "password": "test",
-    "email": "test@example.com",
-    "profilePicture": "default.jpg",
-    "bio": "This is a test user"
-}
-
-
-POST http://localhost:3000/users/login
-Content-Type: application/json
-
-{
-    "username": "test",
+    "username": "yossi",
     "password": "test"
 }
-
-
-POST http://localhost:3000/users/logout
-Content-Type: application/json
-    
-    {
-        "username": "test",
-        "password": "test"
-    }
-
-  
-GET http://localhost:3000/users
-Content-Type: application/json
-
-GET http://localhost:3000/users/1
-Content-Type: application/json
-
-PUT http://localhost:3000/users/1
-Content-Type: application/json
-
-{
-    "username": "updated_username",
-    "password": "updated_password",
-    "email": "updated_email@example.com",
-    "profilePicture": "updated.jpg",
-    "bio": "This is an updated user"
-}
-
-DELETE http://localhost:3000/users/1
-Content-Type: application/json
-
-DELETE http://localhost:3000/users/2
-Content-Type: application/json
-
 

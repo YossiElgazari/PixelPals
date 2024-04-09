@@ -1,12 +1,19 @@
 import express from 'express';
-import { register, login } from '../controllers/userController';
-
+import UserController from '../controllers/userController';
+import {protect} from '../middlewares/authMiddleware';
 const router = express.Router();
 
+
 // Registration endpoint
-router.post('/register', register);
+router.post('/register', UserController.register.bind(UserController));
 
 // Login endpoint
-router.post('/login', login);
+router.post('/login', UserController.login.bind(UserController));   
+
+// Logout endpoint
+router.get('/logout', protect, UserController.logout.bind(UserController)); 
+
+// Get user profile
+//router.get('/profile', protect, UserController.getprofile.bind(UserController));
 
 export default router;

@@ -4,7 +4,7 @@ export interface IPost extends Document {
     content: string;
     photo: string;
     owner: string;
-    likes: number; // Number of likes
+    likes: number;
 }
 
 const PostSchema: Schema = new Schema({
@@ -14,7 +14,8 @@ const PostSchema: Schema = new Schema({
     },
     photo: {
         type: String,
-        required: true,
+        required: false,
+        default: "",
     },
     owner: {
         type: String,
@@ -22,8 +23,8 @@ const PostSchema: Schema = new Schema({
     },
     likes: {
         type: Number,
-        default: 0, // Default value of likes is 0
+        default: 0,
     },
 });
 
-export default mongoose.model<IPost>("Post", PostSchema);
+export default mongoose.model<IPost>("Post", PostSchema, 'posts');

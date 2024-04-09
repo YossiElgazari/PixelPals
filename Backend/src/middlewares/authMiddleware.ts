@@ -1,36 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '../models/userModel'; 
 
-export const protect = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  let token;
-
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      token = req.headers.authorization.split(' ')[1];
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        if (!token) {
+            return res.sendStatus(401);
+        }
 
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
-
-      if (decoded.exp && Date.now() >= decoded.exp * 1000) {
-        res.status(401).json({ message: "Token has expired" });
-        return;
-      }
-
-      // Add user to request object
-      const user = await User.findById(decoded.userId).select('-passwordHash');
-      if (!user) {
-        res.status(401).json({ message: "User not found" });
-        return;
-      }
-
-      req.user = user;
-      next();
+        jwt.verify(token, process.env.JWT_SECRET, (err, data: jwt.JwtPayload) => {
+            if (err) {
+                return res.sendStatus(401);
+            }
+            const id = data._id;
+            req.user = { _id: id };
+            return next();
+        });
     } catch (error) {
-      console.error(error);
-      res.status(401).json({ message: "Invalid token" });
+        console.error("Error in authentication middleware:", error);
+        return res.status(500).send("Internal Server Error");
     }
-  } else {
-    res.status(401).json({ message: "Not authorized, no token" });
-  }
 };
+
+export type AuthRequest = Request & { user: { _id: string } };

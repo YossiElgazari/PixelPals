@@ -1,21 +1,34 @@
 import express from 'express';
-import connectDB from './config/db'; 
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import userRoutes from './routes/userRoutes'; 
 import postRoutes from './routes/postRoutes';
+import bodyParser from 'body-parser';
+import { Express } from 'express';
 
-connectDB();
+const env = dotenv.config();
+if (env.error) {
+    throw new Error("Failed to load the .env file");
+}
 
+const DATABASE_URL = process.env.DATABASE_URL;
 const app = express();
-const port: number | string = process.env.PORT || 3000;
 
-app.use(express.json());
+const init = async (): Promise<Express> => {
+  try {
+    await mongoose.connect(DATABASE_URL);
+    console.log("Connected to the database");
 
-app.use('/users', userRoutes);
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
+    app.use('/users', userRoutes);
+    app.use('/posts', postRoutes);
 
-app.use('/post', postRoutes)
+    return app;
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    throw error; 
+  }
+};
 
-app.listen(port, (): void => {
-  console.log(`Server is running on port ${port}`);
-});
-
-export default app;
+export default init;
