@@ -53,6 +53,15 @@ describe("User Authentication Tests", () => {
     user.token = res.body.token; 
   });
 
+  test("Get User Porfile", async () => {
+    const res = await request(app)
+      .get("/users/profile")
+      .set("authorization", `Bearer ${user.token}`);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty("username");
+    expect(res.body).toHaveProperty("bio");
+  });
+
   test("Create Post", async () => {
     const res = await request(app)
       .post("/posts/create")
@@ -61,7 +70,7 @@ describe("User Authentication Tests", () => {
     expect(res.statusCode).toEqual(201);
     expect(res.body).toHaveProperty("content");
   });
-
+  
   test("Logout User", async () => {
     const res = await request(app)
       .get("/users/logout")

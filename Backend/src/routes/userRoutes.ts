@@ -14,6 +14,6 @@ router.post('/login', UserController.login.bind(UserController));
 router.get('/logout', protect, UserController.logout.bind(UserController)); 
 
 // Get user profile
-//router.get('/profile', protect, UserController.getprofile.bind(UserController));
+router.get('/profile', protect, UserController.getuserprofile.bind(UserController));
 
 export default router;

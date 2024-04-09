@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './components/loginScreen';
-import RegisterScreen from './components/registerScreen';
+import LoginScreen from './views/loginScreen';
+import RegisterScreen from './views/registerScreen';
 import BottomTabNavigator from './components/bottomTabNavigator'; 
 import { StatusBar } from 'react-native';
 
