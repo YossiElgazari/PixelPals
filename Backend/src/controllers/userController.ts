@@ -21,7 +21,7 @@ class UserController extends BaseController<IUser> {
       try {
         const { username, email, password } = req.body as ReqBody;
     
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ username });
         if (user) {
           res.status(400).json({ message: "User already exists" });
           return;
@@ -46,6 +46,7 @@ class UserController extends BaseController<IUser> {
   
     async login(req: Request, res: Response): Promise<void> {
       try {
+        console.log(req.body);
         const {username, password } = req.body as ReqBody;
         
         const user = await User.findOne({ username });
@@ -59,7 +60,6 @@ class UserController extends BaseController<IUser> {
           res.status(401).json({ message: "Invalid username or password" });
           return;
         }
-        
         const token = jwt.sign({ "_id": user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).send({ "token": token });
       } catch (error: unknown) {

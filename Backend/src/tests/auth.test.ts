@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { App } from 'supertest/types'
 import mongoose from 'mongoose';
-import User from '../models/userModel';
 import init from '../app';
 
 type TestUser = {
@@ -28,11 +27,9 @@ beforeAll(async () => {
   app = await init();
   console.log("Before All")
   await mongoose.connect(process.env.DATABASE_URL!);
-  await User.deleteMany({ email: user.email });
 });
 
 afterAll(async () => {
-  await User.deleteMany({ email: user.email });
   await mongoose.connection.close();
 });
 

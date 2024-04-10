@@ -1,29 +1,43 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types';
+import React, { useRef } from "react";
+import { View, StyleSheet, ScrollView, Animated, Image } from "react-native";
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
-};
+const HomeScreen = () => {
+  const scrollY = useRef(new Animated.Value(0)).current;
 
-const HomeScreen: React.FC<Props> = ({ navigation }) => {
+  // translateY will animate the whole header off the screen without resizing it
+  const headerTranslateY = scrollY.interpolate({
+    inputRange: [0, 50],
+    outputRange: [0, -50], // Start moving up when scrolling down
+    extrapolate: "clamp",
+  });
+
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>PixelPals</Text>
-      </View>
-
-      {/* Content */}
-      <Text style={styles.title}>Welcome to PixelPals</Text>
-      {/* Home content */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.replace('Login')}
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.contentContainer}
+        onScroll={(event) => {
+          scrollY.setValue(event.nativeEvent.contentOffset.y);
+        }}
+        scrollEventThrottle={16}
       >
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
+        {/* Dummy content to enable scrolling */}
+        <View style={styles.content} />
+      </ScrollView>
+
+      <Animated.View
+        style={[
+          styles.header,
+          {
+            transform: [{ translateY: headerTranslateY }],
+          },
+        ]}
+      >
+        <Image
+          source={require("../assets/PixelPalstextstright.png")}
+          style={styles.logo}
+        />
+      </Animated.View>
     </View>
   );
 };
@@ -31,39 +45,31 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: "#121212",
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingTop: 50, 
+  },
+  content: {
+    height: 1500, 
   },
   header: {
-    backgroundColor: '#121212',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#121212",
+    alignItems: "center",
+    justifyContent: "center",
     height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#333',
   },
-  headerText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  title: {
-    color: '#e91e63',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginLeft: 10,
-  },
-  button: {
-    backgroundColor: '#e91e63',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
+  logo: {
+    width: 200,
+    height: 25,
+    resizeMode: "contain",
   },
 });
 

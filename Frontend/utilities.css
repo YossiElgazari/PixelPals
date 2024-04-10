@@ -1,0 +1,27 @@
+.text-primary { color: #e91e63; }
+.bg-primary { background-color: #e91e63; }
+.padding-md { padding: 16px; }
+.margin-md { margin: 16px; }
+.border-rounded { border-radius: 8px; }
+.text-secondary { color: #2196f3; }
+.bg-secondary { background-color: #2196f3; }
+.padding-lg { padding: 24px; }
+.margin-lg { margin: 24px; }
+.border-thick { border-width: 2px; }
+.button {
+    /* button styles here */
+    background-color: #e91e63;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.textbox {
+    /* textbox styles here */
+    padding: 8px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    outline: none;
+}

@@ -25,6 +25,6 @@ const PostSchema: Schema = new Schema({
         type: Number,
         default: 0,
     },
-});
+},{ timestamps: true });
 
 export default mongoose.model<IPost>("Post", PostSchema, 'posts');
