@@ -7,6 +7,16 @@ import BottomTabNavigator from './components/bottomTabNavigator';
 import { StatusBar } from 'react-native';
 import './utilities.css';
 
+export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  Home: undefined;
+  Profile: undefined;
+  Explore: undefined;
+  Search: undefined;
+  AddPost: undefined;
+};
+
 const Stack = createNativeStackNavigator();
 
 const App: React.FC = () => {

@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { View, TextInput, FlatList, StyleSheet } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../App';
 
-const SearchScreen: React.FC = () => {
+type Props = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Search'>;
+};
+
+const SearchScreen: React.FC<Props> = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   /// SEARCH FUNCTION

@@ -1,7 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../App';
 
-const AddPostScreen: React.FC = () => {
+type Props = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'AddPost'>;
+};
+
+const AddPostScreen: React.FC<Props> = () => {
   // post creation logic
   const handleAddPost = () => {
     // post addition logic

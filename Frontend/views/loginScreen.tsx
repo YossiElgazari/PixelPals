@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput, Alert } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types';
 import {setAuthToken, authApi} from '../api'; // Ensure you're importing correctly based on your project structure
+import { RootStackParamList } from '../App';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;

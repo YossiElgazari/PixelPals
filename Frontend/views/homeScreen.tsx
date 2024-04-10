@@ -1,7 +1,13 @@
 import React, { useRef } from "react";
 import { View, StyleSheet, ScrollView, Animated, Image } from "react-native";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from "../App";
 
-const HomeScreen = () => {
+type Props = {
+  navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
+};
+
+const HomeScreen: React.FC<Props> = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
 
   // translateY will animate the whole header off the screen without resizing it
