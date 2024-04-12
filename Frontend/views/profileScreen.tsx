@@ -1,12 +1,6 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RootStackParamList } from '../App';
-
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'>;
-};
 
 const ProfileScreen = () => {
   // Dummy data 

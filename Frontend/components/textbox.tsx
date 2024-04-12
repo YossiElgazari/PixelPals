@@ -1,6 +1,6 @@
 import React from 'react';
 
-type TextboxProps = {
+type MyTextboxProps = {
   type?: string;
   placeholder?: string;
   value: string;
@@ -8,7 +8,7 @@ type TextboxProps = {
   className?: string;
 };
 
-const Textbox: React.FC<TextboxProps> = ({
+const MyTextbox: React.FC<MyTextboxProps> = ({
   type = 'text',
   placeholder = '',
   value,
@@ -34,4 +34,4 @@ const Textbox: React.FC<TextboxProps> = ({
   );
 };
 
-export default Textbox;
+export default MyTextbox;

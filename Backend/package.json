@@ -4,11 +4,14 @@
   "description": "Backend of the site",
   "main": "server.ts",
   "scripts": {
-    "test": "tsc && jest --detectOpenHandles --forceExit",
-    "testAuth": "tsc && jest --detectOpenHandles --forceExit ./src/tests/auth.test.ts",
-    "start": "tsc && node dist/server.js",
-    "lint": "eslint . --ext .ts",
-    "dev": "nodemon ./src/server.ts"
+    "start": "shx cp .env.dev .env && tsc && node dist/server.js",
+    "dev": "shx cp .env.dev .env && nodemon ./server.ts",
+    "test": "shx cp .env.test .env && jest --detectOpenHandles --forceExit",
+    "testAuth": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/auth.test.ts",
+    "testUser": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/user.test.ts",
+    "testPost": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/post.test.ts",
+    "testLike": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/like.test.ts",
+    "lint": "eslint . --ext .ts"
   },
   "author": "Yossi Elgazari",
   "license": "ISC",
@@ -24,16 +27,19 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
-    "@types/jsonwebtoken": "^9.0.6",
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/supertest": "^6.0.2",
-    "@typescript-eslint/eslint-plugin": "^7.4.0",
-    "@typescript-eslint/parser": "^7.4.0",
-    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
     "jest": "^29.7.0",
-    "nodemon": "^3.1.0",
+    "nodemon": "^3.0.3",
+    "shx": "^0.3.4",
     "supertest": "^6.3.4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.3"
+    "typescript": "^5.3.3"
   }
 }

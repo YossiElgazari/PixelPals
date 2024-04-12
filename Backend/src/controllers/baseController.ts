@@ -1,65 +1,68 @@
-//import { Request, Response } from "express";
+import { Request, Response } from "express";
 import mongoose from "mongoose";
 
-class BaseController<ModelInterface>{
-    model: mongoose.Model<ModelInterface>;
-
-    constructor(model) {
-        this.model = model;
+class BaseController<ModelType> {
+    itemModel: mongoose.Model<ModelType>;
+    constructor(itemModel: mongoose.Model<ModelType>) {
+        this.itemModel = itemModel;
+    }
+    async get(req: Request, res: Response) {
+        console.log("get");
+        try {
+            if (req.query.name) {
+                const item = await this.itemModel.find({ name: req.query.name });
+                res.status(200).send(item);
+            } else {
+                const item = await this.itemModel.find();
+                res.status(200).send(item);
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(400).send(error.message);
+        }
     }
 
-//     async get(req: Request, res: Response) {
-//         try {
-//             if (req.params.id != null) {
-//                 const students = await this.model.findById(req.params.id);
-//                 return res.status(200).send(students);
-//             } else {
-//                 if (req.query.name != null) {
-//                     const students = await this.model.find({ name: req.query.name });
-//                     return res.status(200).send(students);
-//                 } else {
-//                     const students = await this.model.find();
-//                     return res.status(200).send(students);
-//                 }
-//             }
-//         } catch (err) {
-//             res.status(500).send(err.message);
-//         }
-//     }
+    async getById(req: Request, res: Response) {
+        console.log(req.params);
+        try {
+            const item = await this.itemModel.findById(req.params.id);
+            if (!item) {
+                return res.status(404).send("not found");
+            } else {
+                return res.status(200).send(item);
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(400).send(error.message);
+        }
+    }
 
-//     async post(req: Request, res: Response) {
-//         const student = req.body;
-//         try {
-//             const newStudent = await this.model.create(student);
-//             res.status(201).json(newStudent);
-//         } catch (err) {
-//             res.status(500).send(err.message);
-//         }
-//     }
+    async post(req: Request, res: Response) {
+        console.log("student post ");
+        try {
+            const student = await this.itemModel.create(req.body);
+            res.status(201).send(student);
+        } catch (error) {
+            console.log(error);
+            res.status(400).send(error.message);
+        }
+    }
 
-//     async put(req: Request, res: Response) {
-//         const student = req.body;
-//         try {
-//             const updatedStudent = await this.model.findByIdAndUpdate(
-//                 student._id,
-//                 student,
-//                 { new: true }
-//             );
-//             res.status(200).json(updatedStudent);
-//         } catch (err) {
-//             res.status(500).send(err.message);
-//         }
-//     }
+    async put(req: Request, res: Response) {
+        console.log("student put");
+        res.status(400).send("Not implemented");
+    }
 
-//     delete(req: Request, res: Response) {
-//         //const student = req.body;
-//         try {
-//             //await this.model.findByIdAndDelete(student._id);
-//             res.status(200).send();
-//         } catch (err) {
-//             res.status(500).send(err.message);
-//         }
-//     }
+    async remove(req: Request, res: Response) {
+        console.log("student delete");
+        try {
+            await this.itemModel.findByIdAndDelete(req.params.id);
+            return res.status(200).send();
+        } catch (error) {
+            console.log(error);
+            res.status(400).send(error.message);
+        }
+    }
 }
 
-export default BaseController 
+export default BaseController;

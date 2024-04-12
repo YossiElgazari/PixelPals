@@ -1,13 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Explore'>;
-};
 
-const ExploreScreen: React.FC<Props> = ({ navigation }) => {
+const ExploreScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Explore Content</Text>

@@ -16,7 +16,8 @@ package-lock.json
 .idea/
 
 .env
-.env.local
+.env.test
+.env.dev
 
 # Logs
 *.log

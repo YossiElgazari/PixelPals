@@ -1,12 +1,12 @@
 import React from 'react';
 
-type ButtonProps = {
+type MyButtonProps = {
   text: string;
   onClick: () => void;
   className?: string;
 };
 
-const Button: React.FC<ButtonProps> = ({ text, onClick, className = '' }) => {
+const MyButton: React.FC<MyButtonProps> = ({ text, onClick, className = '' }) => {
   const style = {
     backgroundColor: '#e91e63', // Pink color
     color: 'white',
@@ -24,4 +24,4 @@ const Button: React.FC<ButtonProps> = ({ text, onClick, className = '' }) => {
   );
 };
 
-export default Button;
+export default MyButton;

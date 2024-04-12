@@ -1,6 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import bcrypt from 'bcryptjs';
-
+import mongoose, { Schema, Document } from "mongoose";
+import bcrypt from "bcryptjs";
 
 export interface IUser extends Document {
   _id: string;
@@ -9,41 +8,47 @@ export interface IUser extends Document {
   passwordHash: string;
   profilePicture?: string;
   bio?: string;
+  tokens: string[];
   isValidPassword(password: string): Promise<boolean>;
 }
 
-const userSchema = new Schema<IUser>({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    minlength: 3,
+const userSchema = new Schema<IUser>(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      minlength: 3,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      match: [/.+@.+\..+/, "Please fill a valid email address"],
+    },
+    passwordHash: {
+      type: String,
+      required: true,
+    },
+    profilePicture: {
+      type: String,
+      default: "",
+    },
+    bio: {
+      type: String,
+      default: "",
+    },
+    tokens: {
+      type: [String],
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    match: [/.+@.+\..+/, 'Please fill a valid email address'],
-  },
-  passwordHash: {
-    type: String,
-    required: true,
-  },
-  profilePicture: {
-    type: String,
-    default: '',
-  },
-  bio: {
-    type: String,
-    default: '',
-  },
-}, { timestamps: true });
+  { timestamps: true },
+);
 
-
-userSchema.pre<IUser>('save', async function(next) {
-  if (!this.isModified('passwordHash')) return next();
+userSchema.pre<IUser>("save", async function (next) {
+  if (!this.isModified("passwordHash")) return next();
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -54,11 +59,12 @@ userSchema.pre<IUser>('save', async function(next) {
   }
 });
 
-
-userSchema.methods.isValidPassword = async function(password: string): Promise<boolean> {
+userSchema.methods.isValidPassword = async function (
+  password: string,
+): Promise<boolean> {
   return bcrypt.compare(password, this.passwordHash);
 };
 
-const User = mongoose.model<IUser>('User', userSchema, 'users');
+const User = mongoose.model<IUser>("User", userSchema);
 
 export default User;
