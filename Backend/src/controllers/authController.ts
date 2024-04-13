@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/userModel";
 import jwt from "jsonwebtoken";
+import { AuthRequest } from "../middleware/authMiddleware";
 
 interface ReqBody {
   username: string;
@@ -9,9 +10,6 @@ interface ReqBody {
   profilePicture?: string;
 }
 
-export interface AuthRequest extends Request {
-  user?: { _id: string };
-}
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -42,90 +40,50 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const refresh = async (req: Request, res: Response) => {
-  //extract token from http header
-  const authHeader = req.headers["authorization"];
-  const refreshTokenOrig = authHeader && authHeader.split(" ")[1];
 
-  if (refreshTokenOrig == null) {
+  const refreshTokenOrig = req.header("authorization");
+
+  if (!refreshTokenOrig) {
     return res.status(401).send("missing token");
   }
 
-  //verify token
-  jwt.verify(
-    refreshTokenOrig,
-    process.env.REFRESH_TOKEN_SECRET,
-    async (err, userInfo: { _id: string }) => {
-      if (err) {
-        return res.status(403).send("invalid token");
-      }
-
-      try {
-        const user = await User.findById(userInfo._id);
-        if (
-          user == null ||
-          user.tokens == null ||
-          !user.tokens.includes(refreshTokenOrig)
-        ) {
-          if (user.tokens != null) {
-            user.tokens = [];
-            await user.save();
-          }
-          return res.status(403).send("invalid token");
-        }
-
-        //generate new access token
-        const { accessToken, refreshToken } = generateTokens(
-          user._id.toString()
-        );
-
-        //update refresh token in db
-        user.tokens = user.tokens.filter((token) => token != refreshTokenOrig);
-        user.tokens.push(refreshToken);
-        await user.save();
-
-        //return new access token & new refresh token
-        return res.status(200).send({
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        });
-      } catch (error) {
-        console.log(error);
-        return res.status(400).send(error.message);
-      }
+  jwt.verify(refreshTokenOrig, process.env.REFRESH_TOKEN_SECRET, async (err, userInfo: { _id: string }) => {
+    if (err) {
+      console.error("Invalid token:", err);
+      return res.status(403).send("Invalid token");
     }
-  );
+
+    const user = await User.findById(userInfo._id);
+    if (!user || !user.tokens.includes(refreshTokenOrig)) {
+      return res.status(403).send("Invalid token");
+    }
+
+    const { accessToken, refreshToken } = generateTokens(user._id.toString());
+
+    // Replace the old refresh token with the new one
+    user.tokens = user.tokens.filter(token => token !== refreshTokenOrig);
+    if (user.tokens.length >= 5) {
+      user.tokens.shift();  // Ensure the array does not exceed 5 tokens
+    }
+    user.tokens.push(refreshToken);
+    await user.save();
+
+    return res.status(200).send({
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    });
+  });
 };
 
-const generateTokens = (
-  userId: string
-): { accessToken: string; refreshToken: string } => {
-  const accessToken = jwt.sign(
-    {
-      _id: userId,
-    },
-    process.env.TOKEN_SECRET,
-    {
-      expiresIn: process.env.TOKEN_EXPIRATION,
-    }
-  );
+const generateTokens = (userId: string): { accessToken: string; refreshToken: string } => {
+  const accessToken = jwt.sign({ _id: userId }, process.env.TOKEN_SECRET, { expiresIn: process.env.TOKEN_EXPIRATION });  // Example expiration
+  const refreshToken = jwt.sign({ _id: userId, salt: Math.random() }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION });  // Example expiration
 
-  const refreshToken = jwt.sign(
-    {
-      _id: userId,
-      salt: Math.random(),
-    },
-    process.env.REFRESH_TOKEN_SECRET
-  );
-
-  return {
-    accessToken: accessToken,
-    refreshToken: refreshToken,
-  };
+  return { accessToken, refreshToken };
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log(req.body);
     const { username, password } = req.body as ReqBody;
 
     const user = await User.findOne({ username });
@@ -141,11 +99,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
     const { accessToken, refreshToken } = generateTokens(user._id.toString());
 
-    if (user.tokens == null) {
-      user.tokens = [refreshToken];
-    } else {
-      user.tokens.push(refreshToken);
+    if (user.tokens.length >= 5) {
+      user.tokens.shift();
     }
+    user.tokens.push(refreshToken);
+    await user.save();
+
     res.status(200).send({
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -159,15 +118,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<void> => {
+export const logout = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    res.status(200).json({ message: "User logged out successfully" });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: "Error message", error: error.message });
+    const user = await User.findById(req.user._id);
+    const refreshToken = req.header('authorization')?.split(' ')[1];
+
+    if (refreshToken) {
+      user.tokens = user.tokens.filter(token => token !== refreshToken);
+      await user.save();
+      res.status(200).json({ message: "User logged out successfully" });
     } else {
-      res.status(500).json({ message: "An unknown error occurred" });
+      res.status(400).json({ message: "No refresh token provided" });
     }
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "An error occurred during logout" });
   }
 };
+
 

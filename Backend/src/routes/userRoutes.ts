@@ -17,4 +17,10 @@ router.put(
   UserController.updateuserprofile.bind(UserController)
 );
 
+router.put(
+  "/resetpassword",
+  protect,
+  UserController.updatepassword.bind(UserController)
+);
+
 export default router;

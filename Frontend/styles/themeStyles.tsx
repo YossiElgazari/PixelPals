@@ -1,12 +1,18 @@
 export const colors = {
     primary: '#d101fd',   // Vivid purple
     secondary: '#05d6ff', // Bright cyan
-    background: '#0e0e10', // Almost black, great for dark themes
+    background: '#00174d', // Almost black, great for dark themes
     surface: '#1f1f23',    // Dark grey for UI elements background
     textPrimary: '#ffffff', // White text for high contrast on dark backgrounds
     textSecondary: '#a1a1a4', // Light grey text for less emphasis
     error: '#ff3333', // Bright red for errors or warnings
     success: '#4caf50', // Green for success messages or icons
+  };
+
+  export const fonts = {
+    primary: 'Poppins-Regular',
+    primaryBold: 'Poppins-Bold',
+    primaryItalic: 'Poppins-Italic',
   };
   
   export const textStyles = {

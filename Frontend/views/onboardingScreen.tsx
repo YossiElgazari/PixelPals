@@ -45,12 +45,6 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
     });
   };
 
-  const onSkip = () => {
-    AsyncStorage.setItem('onboardingCompleted', 'true').then(() => {
-      navigation.replace("Login");
-    });
-  };
-
   return (
     <AppIntroSlider
       renderItem={({ item }) => (

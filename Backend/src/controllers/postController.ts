@@ -1,6 +1,6 @@
 import { Response } from "express";
 import BaseController from "./baseController";
-import { AuthRequest } from "./authController";
+import { AuthRequest } from "../middleware/authMiddleware";
 import Post, { IPost } from "../models/postModel";
 
 class PostController extends BaseController<IPost> {

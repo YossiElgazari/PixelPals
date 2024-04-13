@@ -24,8 +24,8 @@ const init = async (): Promise<Express> => {
     app.use(bodyParser.json());
 
     app.use("/auth", authRoutes);
-    app.use("/users", userRoutes);
-    app.use("/posts", postRoutes);
+    app.use("/user", userRoutes);
+    app.use("/post", postRoutes);
 
     return app;
   } catch (error) {
