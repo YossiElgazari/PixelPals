@@ -40,7 +40,7 @@ const HomeScreen: React.FC<Props> = () => {
         ]}
       >
         <Image
-          source={require("../assets/PixelPalstextstright.png")}
+          source={require("../assets/PixelPalstext.png")}
           style={styles.logo}
         />
       </Animated.View>
