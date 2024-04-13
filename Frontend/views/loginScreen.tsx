@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, Button, StyleSheet, TextInput, Alert } from "react-native";
+import { View, Text, Button, StyleSheet, TextInput, Alert, Image } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { setAuthToken, authApi } from "../api/authApi";
 import { RootStackParamList } from "../App";
-import { colors, textStyles, containerStyles , buttonStyles } from '../styles/themeStyles'
+import { colors } from '../styles/themeStyles';
 
- type Props = {
+type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
 };
 
@@ -32,57 +32,74 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headline}>Login</Text>
+      <View style={styles.logoContainer}>
+        <Image source={require('../assets/PixelPalslogo.png')} style={styles.logo} />
+        <Text style={styles.headline}>Login</Text>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Username"
         onChangeText={setUsername}
         value={username}
+        placeholderTextColor={colors.textPrimary}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
         onChangeText={setPassword}
         value={password}
-        secureTextEntry // Hide the entered text
+        secureTextEntry
+        placeholderTextColor={colors.textPrimary}
       />
-      <Button title="Login" onPress={handleLogin} />
-      <Button
-        title="Don't have an account? Register"
-        onPress={() => navigation.navigate("Register")}
-      />
+      <View style={styles.buttonContainer}>
+        <Button title="Login" onPress={handleLogin} color={colors.background} />
+        <Button
+          title="Register"
+          onPress={() => navigation.navigate("Register")}
+          color={colors.grey}
+        />
+      </View>
     </View>
   );
 };
 
-// Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121212",
+    backgroundColor: colors.secondary,
     justifyContent: "center",
     alignItems: "center",
   },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    marginRight: 10,
+  },
   headline: {
-    fontSize: 24,
-      fontWeight: 'bold',
-      color: colors.textPrimary,
-      marginBottom: 16,
+    fontSize: 44,
+    fontWeight: 'bold',
+    color: colors.background,
   },
   input: {
     width: "80%",
     height: 40,
-    borderWidth: 1,
-    borderColor: "gray",
+    borderRadius: 5,
     marginBottom: 20,
     paddingHorizontal: 10,
-    backgroundColor: "white",
-  },
-  button: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    backgroundColor: colors.background,
     color: colors.textPrimary,
-    textAlign: 'center',
+    fontFamily: 'Roboto',
+  },
+  buttonContainer: {
+    width: "30%",
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    gap: 20,
   }
 });
 
