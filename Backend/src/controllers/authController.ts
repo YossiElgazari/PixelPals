@@ -121,7 +121,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const logout = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = await User.findById(req.user._id);
-    const refreshToken = req.header('authorization')?.split(' ')[1];
+    const refreshToken = req.header("refreshToken");
 
     if (refreshToken) {
       user.tokens = user.tokens.filter(token => token !== refreshToken);

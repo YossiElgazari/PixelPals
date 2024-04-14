@@ -1,17 +1,19 @@
-import clientApi  from './clientApi';
+import clientApi from "./clientApi";
 
 export const authApi = {
-    register: (data: { username: string; email: string; password: string }) => clientApi.post('/users/register', data),
-    login: (data: { username: string; password: string }) => clientApi.post('/users/login', data),
-    logout: () => clientApi.get('/users/logout'),
-    getUserProfile: () => clientApi.get('/users/profile'),
-    updateUserProfile: (data: { username: string; email: string }) => clientApi.put('/users/profile', data),
-  };
+  register: (data: { username: string; email: string; password: string }) =>
+    clientApi.post("/auth/register", data),
+  login: (data: { username: string; password: string }) =>
+    clientApi.post("/auth/login", data),
+  logout: () => clientApi.get("/auth/logout"),
+};
 
-  export const setAuthToken = (token: string | null) => {
-    if (token) {
-      clientApi.defaults.headers.common['authorization'] = `Bearer ${token}`;
-    } else {
-      delete clientApi.defaults.headers.common['authorization'];
-    }
-  };
+export const setAuthToken = (accessToken: string, refreshToken: string) => {
+  if (accessToken && refreshToken) {
+    clientApi.defaults.headers.common["authorization"] = `${accessToken}`;
+    clientApi.defaults.headers.common["refreshToken"] = refreshToken;
+  } else {
+    delete clientApi.defaults.headers.common["authorization"];
+    delete clientApi.defaults.headers.common["refreshToken"];
+  }
+};

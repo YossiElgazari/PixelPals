@@ -17,10 +17,18 @@ router.put(
   UserController.updateuserprofile.bind(UserController)
 );
 
+// Update user password
 router.put(
-  "/resetpassword",
+  "/reset-password",
   protect,
   UserController.updatepassword.bind(UserController)
+);
+
+// Update user profile picture
+router.put(
+  "/profilePicture",
+  protect,
+  UserController.updateprofilepicture.bind(UserController)
 );
 
 export default router;

@@ -8,6 +8,8 @@ interface ReqBody {
   username: string;
   email: string;
   password: string;
+  oldPassword?: string;
+  newPassword?: string;
   bio?: string;
   profilePicture?: string;
 }
@@ -19,7 +21,7 @@ class UserController extends BaseController<IUser> {
 
   async getuserprofile(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = req.user._id
+      const userId = req.user._id;
       const user = await User.findById(userId);
       if (!user) {
         res.status(404).json({ message: "User not found" });
@@ -40,7 +42,7 @@ class UserController extends BaseController<IUser> {
 
   async updateuserprofile(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = req.user._id
+      const userId = req.user._id;
       const user = await User.findById(userId);
       if (!user) {
         res.status(404).json({ message: "User not found" });
@@ -67,18 +69,47 @@ class UserController extends BaseController<IUser> {
 
   async updatepassword(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = req.user._id
+      const userId = req.user._id;
       const user = await User.findById(userId);
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;
       }
-      const { password } = req.body as ReqBody;
-      user.passwordHash = password || user.passwordHash;
+      const { oldPassword, newPassword } = req.body as ReqBody;
+      const isMatch = await user.isValidPassword(oldPassword);
+      if (!isMatch) {
+        res.status(401).json({ message: "Invalid password" });
+        return;
+      }
+      user.passwordHash = newPassword;
       await user.save();
       res.status(200).json(user);
     } catch (error: unknown) {
       console.log("updatepassowrd error", error);
+      if (error instanceof Error) {
+        res
+          .status(500)
+          .json({ message: "Error message", error: error.message });
+      } else {
+        res.status(500).json({ message: "An unknown error occurred" });
+      }
+    }
+  }
+
+  async updateprofilepicture(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.user._id;
+      const user = await User.findById(userId);
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+      const { profilePicture } = req.body as ReqBody;
+      user.profilePicture = profilePicture || user.profilePicture;
+      await user.save();
+      res.status(200).json(user);
+    } catch (error: unknown) {
+      console.log("updateprofilepicture error", error);
       if (error instanceof Error) {
         res
           .status(500)

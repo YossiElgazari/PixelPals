@@ -14,6 +14,7 @@ import { setAuthToken, authApi } from "../api/authApi";
 import { RootStackParamList } from "../App";
 import { colors } from "../styles/themeStyles";
 import Checkbox from "expo-checkbox";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -22,7 +23,6 @@ type Props = {
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isChecked, setChecked] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -30,7 +30,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       const response = await authApi.login(userData);
 
       if (response.status === 200) {
-        setAuthToken(response.data.token);
+        setAuthToken(response.data.accessToken, response.data.refreshToken);
         navigation.navigate("Home");
       } else {
         throw new Error("Failed to login");
@@ -55,41 +55,51 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         />
       </View>
       <Text style={styles.headline}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        onChangeText={setUsername}
-        value={username}
-        placeholderTextColor={colors.textPrimary}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        onChangeText={setPassword}
-        value={password}
-        secureTextEntry
-        placeholderTextColor={colors.textPrimary}
-      />
-      <View style={styles.rememberMeAndForgotPasswordContainer}>
-        <View style={styles.rememberMeContainer}>
-          <Checkbox
-            value={isChecked}
-            onValueChange={setChecked}
-            color={isChecked ? colors.background : undefined} // Use your theme primary color
-          />
-          <Text style={styles.label}>Remember me</Text>
-        </View>
+      <View style={styles.inputContainer}>
+        <Icon name="user" size={22} color={colors.background} />
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          onChangeText={setUsername}
+          value={username}
+          placeholderTextColor={colors.textPrimary}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Icon name="lock" size={22} color={colors.background} />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          onChangeText={setPassword}
+          value={password}
+          secureTextEntry
+          placeholderTextColor={colors.textPrimary}
+        />
+      </View>
+      <View style={styles.ForgotPasswordContainer}>
         <TouchableOpacity onPress={handleForgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
         <Button title="Login" onPress={handleLogin} color={colors.background} />
+        <View style={styles.dividerContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>OR</Text>
+          <View style={styles.dividerLine} />
+        </View>
         <Button
           title="Register"
           onPress={() => navigation.navigate("Register")}
           color={colors.grey}
         />
+        <Icon.Button
+          name="google"
+          backgroundColor="#DB4437"
+          style={styles.button}
+        >
+          <Text style={styles.text}>Login with Google</Text>
+        </Icon.Button>
       </View>
     </View>
   );
@@ -111,6 +121,9 @@ const styles = StyleSheet.create({
     width: 150,
     height: 125,
   },
+  icon: {
+    padding: 10,
+  },
   headline: {
     fontSize: 32,
     fontWeight: "800",
@@ -118,20 +131,18 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   input: {
-    width: "80%",
+    flex: 1,
+    paddingHorizontal: 10,
     height: 40,
-    borderBottomWidth: 2, // Set the width of the bottom border
-    marginBottom: 20,
-    paddingHorizontal: 10, // If you want no background, set this to 'transparent'
     color: colors.textPrimary,
-    fontFamily: "Roboto",
-    // Set the rest of the borders to 0 to only show the bottom line
-    borderWidth: 0, // This removes border from all sides
-    borderTopWidth: 0, // Redundant due to the above, but included for clarity
-    borderLeftWidth: 0,
-    borderRightWidth: 0,
-    // Optionally set border color for the bottom border
-    borderBottomColor: colors.background, // Use your theme color or any color for underline
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "80%",
+    borderBottomWidth: 2,
+    borderBottomColor: colors.background,
+    marginBottom: 20,
   },
   buttonContainer: {
     width: "80%",
@@ -144,19 +155,45 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     marginLeft: 8,
   },
-  rememberMeAndForgotPasswordContainer: {
+  ForgotPasswordContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     width: "80%",
     marginBottom: 20,
-  },
-  rememberMeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    marginTop: -10,
+    opacity: 0.8,
   },
   forgotPasswordText: {
-    color: colors.background, // Use a color that signifies an action or use the theme primary color
-    // fontFamily: "Roboto", // Uncomment if you have this font set up
+    color: colors.background,
+    fontSize: 12, 
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  text: {
+    fontSize: 15,
+    color: "#ffffff", // Ensures text is easily readable on the button
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 20,
+    opacity: 0.8,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#FFFFFF",
+
+  },
+  dividerText: {
+    width: 50,
+    textAlign: "center",
+    color: "#FFFFFF",
   },
 });
 
