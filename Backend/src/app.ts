@@ -15,23 +15,22 @@ if (env.error) {
 const DATABASE_URL = process.env.DATABASE_URL;
 const app = express();
 
-const init = async (): Promise<Express> => {
-  try {
-    await mongoose.connect(DATABASE_URL);
-    console.log("Connected to the database");
-
-    app.use(bodyParser.urlencoded({ extended: true }));
-    app.use(bodyParser.json());
-
-    app.use("/auth", authRoutes);
-    app.use("/user", userRoutes);
-    app.use("/post", postRoutes);
-
-    return app;
-  } catch (error) {
-    console.error("Error connecting to the database:", error);
-    throw error;
-  }
+const initApp = () => {
+  const promise = new Promise<Express>((resolve) => {
+    const db = mongoose.connection;
+    db.on("error", (err) => console.log(err));
+    db.once("open", () => console.log("Database connected"));
+    mongoose.connect(DATABASE_URL).then(() => {
+      app.use(express.json());
+      app.use(bodyParser.json());
+      app.use(bodyParser.urlencoded({ extended: true }));
+      app.use("/user", userRoutes);
+      app.use("/post", postRoutes);
+      app.use("/auth", authRoutes);
+      resolve(app);
+    })
+  });
+  return promise;
 };
 
-export default init;
+export default initApp;

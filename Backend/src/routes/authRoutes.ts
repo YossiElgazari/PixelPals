@@ -134,6 +134,6 @@ router.get("/logout", protect, logout);
  *             schema:
  *               $ref: '#/components/schemas/Tokens'
  */
-router.get("/refresh", protect, refresh);
+router.get("/refresh", refresh);
 
 export default router;

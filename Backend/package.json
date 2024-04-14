@@ -4,13 +4,9 @@
   "description": "Backend of the site",
   "main": "server.ts",
   "scripts": {
-    "start": "shx cp .env.dev .env && tsc && node dist/server.js",
+    "start": "tsc && node dist/server.js",
     "dev": "shx cp .env.dev .env && nodemon ./server.ts",
     "test": "shx cp .env.test .env && jest --detectOpenHandles --forceExit",
-    "testAuth": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/auth.test.ts",
-    "testUser": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/user.test.ts",
-    "testPost": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/post.test.ts",
-    "testLike": "shx cp .env.test .env && jest --detectOpenHandles --forceExit ./src/tests/like.test.ts",
     "lint": "eslint . --ext .ts"
   },
   "author": "Yossi Elgazari",
@@ -21,7 +17,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.2.1"
+    "mongoose": "^8.2.1",
+    "validator": "^13.11.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

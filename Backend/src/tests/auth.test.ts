@@ -21,7 +21,7 @@ const user: TestUser = {
   username: "testUser",
   email: "test@test.com",
   password: "1234",
-  bio: "This is a test user",
+  profilePicture: "test.jpg",
 };
 
 beforeAll(async () => {
@@ -33,8 +33,8 @@ beforeAll(async () => {
 afterAll(async () => {
   console.log("After All");
   await User.deleteMany({ username: user.username });
+  await User.deleteMany({ username: "newname" });
   await Post.deleteMany({ content: "This is a test post" });
-  await User.deleteMany({ username: "newname"})
   await mongoose.connection.close();
 });
 
@@ -63,7 +63,7 @@ describe("User Authentication Tests", () => {
     console.log("Get User Profile Test Start:\n", user);
     const res = await request(app)
       .get("/user/profile")
-      .set("authorization", `${user.accessToken}`);
+      .set("Authorization", `Bearer ${user.accessToken}`);
     console.log("Get User Profile Test:\n", res.body);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty("username");
@@ -75,7 +75,7 @@ describe("User Authentication Tests", () => {
     console.log("Update User Profile Test Start:\n", user);
     const res = await request(app)
       .put("/user/profile")
-      .set("authorization", `${user.accessToken}`)
+      .set("Authorization", `Bearer ${user.accessToken}`)
       .send({
         username: "newname",
         email: "yossi@newemail.com",
@@ -89,9 +89,9 @@ describe("User Authentication Tests", () => {
   test("Update User Password", async () => {
     console.log("Update User Password Test Start:\n", user);
     const res = await request(app)
-      .put("/user/resetpassword")
-      .set("authorization", `${user.accessToken}`)
-      .send({ password: "12yossi345" });
+      .put("/user/reset-password")
+      .set("Authorization", `Bearer ${user.accessToken}`)
+      .send({ oldPassword: user.password, newPassword: "12345"});
     expect(res.statusCode).toEqual(200);
     console.log("Update User Password Test Finish:\n", res.body);
   });
@@ -100,7 +100,7 @@ describe("User Authentication Tests", () => {
     console.log("Create Post Test Start:\n", user);
     const res = await request(app)
       .post("/post")
-      .set("authorization", `${user.accessToken}`)
+      .set("Authorization", `Bearer ${user.accessToken}`)
       .send({ content: "This is a test post" });
     expect(res.statusCode).toEqual(201);
     expect(res.body).toHaveProperty("content");
@@ -111,19 +111,20 @@ describe("User Authentication Tests", () => {
     console.log("Refresh Token Test Start:\n", user);
     const res = await request(app)
       .get("/auth/refresh")
-      .set("authorization", `${user.accessToken}`)
-      .send();
-    expect(res.statusCode).toBe(200);
+      .set({ Authorization: "Bearer " + user.refreshToken });
+    expect(res.statusCode).toEqual(200);
     user.accessToken = res.body.accessToken;
     user.refreshToken = res.body.refreshToken;
+    expect(user.accessToken).toBeDefined();
+    expect(user.refreshToken).toBeDefined();
     console.log("Refresh Token Test Finish:\n", res.body);
   });
 
   test("Logout User", async () => {
     console.log("Logout User Test Start:\n", user);
     const res = await request(app)
-      .get("/user/logout")
-      .set("authorization", `${user.accessToken}`);
+      .get("/auth/logout")
+      .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({ message: "User logged out successfully" });
     console.log("Logout User Test Finish:\n", res.body);

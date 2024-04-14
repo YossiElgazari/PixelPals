@@ -26,7 +26,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const userData = { username: "testUser", password: "1234" };
+      const userData = {
+        username,
+        password,
+      };
       const response = await authApi.login(userData);
 
       if (response.status === 200) {
@@ -47,6 +50,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
+    <View style={styles.maincontainer}>
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
@@ -84,15 +88,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <Button title="Login" onPress={handleLogin} color={colors.background} />
         <View style={styles.dividerContainer}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>OR</Text>
-          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>or Login via</Text>
         </View>
-        <Button
-          title="Register"
-          onPress={() => navigation.navigate("Register")}
-          color={colors.grey}
-        />
         <Icon.Button
           name="google"
           backgroundColor="#DB4437"
@@ -100,12 +97,31 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         >
           <Text style={styles.text}>Login with Google</Text>
         </Icon.Button>
+        <Icon.Button
+          name="facebook"
+          backgroundColor="#3B5998"
+          style={styles.button}
+        >
+          <Text style={styles.text}>Login with Facebook</Text>
+        </Icon.Button>
       </View>
     </View>
+     <View style={styles.bottompagesignup}>
+     <Text style={styles.label}>Don't have an account?</Text>
+     <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+       <Text style={styles.signupText}>SIGN UP</Text>
+     </TouchableOpacity>
+   </View>
+   </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
+  maincontainer: {
+    flex: 1,
+    backgroundColor: colors.secondary,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.secondary,
@@ -153,7 +169,6 @@ const styles = StyleSheet.create({
   label: {
     color: colors.textPrimary,
     fontFamily: "Roboto",
-    marginLeft: 8,
   },
   ForgotPasswordContainer: {
     flexDirection: "row",
@@ -165,7 +180,7 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     color: colors.background,
-    fontSize: 12, 
+    fontSize: 12,
   },
   button: {
     paddingVertical: 10,
@@ -179,21 +194,27 @@ const styles = StyleSheet.create({
     color: "#ffffff", // Ensures text is easily readable on the button
   },
   dividerContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    marginVertical: 20,
     opacity: 0.8,
   },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#FFFFFF",
-
-  },
   dividerText: {
-    width: 50,
+    fontSize: 14,
+    fontWeight: "400",
     textAlign: "center",
     color: "#FFFFFF",
+  },
+  bottompagesignup: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+    marginBottom: 20,
+  },
+  signupText: {
+    color: colors.background,
+    fontSize: 14,
+    fontWeight: '800',
   },
 });
 

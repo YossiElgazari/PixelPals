@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
+import validator from "validator";
 
 export interface IUser extends Document {
   _id: string;
@@ -19,14 +20,16 @@ const userSchema = new Schema<IUser>(
       required: true,
       unique: true,
       trim: true,
-      minlength: 3,
     },
     email: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      match: [/.+@.+\..+/, "Please fill a valid email address"],
+      validate: {
+        validator: (value) => validator.isEmail(value),
+        message: 'Please provide a valid email.',
+      },
     },
     passwordHash: {
       type: String,
@@ -42,6 +45,7 @@ const userSchema = new Schema<IUser>(
     },
     tokens: {
       type: [String],
+      default: [],
     },
   },
   { timestamps: true },
