@@ -7,6 +7,9 @@
     "start": "tsc && node dist/server.js",
     "dev": "shx cp .env.dev .env && nodemon ./src/server.ts",
     "test": "shx cp .env.test .env && tsc && jest --runInBand --coverage --detectOpenHandles --forceExit",
+    "testAuth": "shx cp .env.test .env && jest auth.test.ts --coverage --detectOpenHandles --forceExit",
+    "testUser": "shx cp .env.test .env && jest user.test.ts --coverage --detectOpenHandles --forceExit",
+    "testPost": "shx cp .env.test .env && jest post.test.ts --coverage --detectOpenHandles --forceExit",
     "lint": "eslint . --ext .ts"
   },
   "author": "Yossi Elgazari",

@@ -6,24 +6,27 @@ const router = express.Router();
 
 
 // Create a new post
-router.post("/", protect, PostController.createPost.bind(PostController));
-
-// // Like a post
-// router.post("/like", protect, PostController.likePost.bind(PostController));
-
-// // Unlike a post
-// router.delete('/unlike', protect,PostController.unlikePost.bind(PostController));
+router.post("/", protect, PostController.create.bind(PostController));
 
 // Delete a post
-router.delete('/', protect, PostController.deletePost.bind(PostController));
+router.delete('/:id', protect, PostController.delete.bind(PostController));
 
 // Update a post
-router.put('/', protect, PostController.updatePost.bind(PostController));
+router.put('/:id', protect, PostController.update.bind(PostController));
 
 // Get all posts of a user
 router.get('/user',protect, PostController.getAllUserPosts.bind(PostController));
 
 // Get all posts
-router.get('/', protect,PostController.getAllPosts.bind(PostController));
+router.get('/', protect,PostController.getAll.bind(PostController));
+
+// Get a post
+router.get('/:id', protect, PostController.getById.bind(PostController));
+
+// Like a post
+router.put('/like/:id', protect, PostController.likePost.bind(PostController));
+
+// Unlike a post
+router.put('/unlike/:id', protect, PostController.unlikePost.bind(PostController));
 
 export default router;

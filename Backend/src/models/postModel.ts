@@ -4,7 +4,7 @@ export interface IPost extends Document {
   content: string;
   photo: string;
   owner: string;
-  likes: number;
+  likes: string[];
 }
 
 const PostSchema: Schema = new Schema(

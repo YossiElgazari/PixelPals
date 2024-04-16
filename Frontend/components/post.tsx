@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 type PostProps = {
   post: {
     _id: string;
+    owner: string;
     content: string;
     photo?: string;
     likes: string[]; // Array of user IDs who liked the post
