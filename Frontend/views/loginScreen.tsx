@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -10,34 +10,24 @@ import {
   Button,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { setAuthToken, authApi } from "../api/authApi";
 import { RootStackParamList } from "../App";
 import { colors } from "../styles/themeStyles";
-import Checkbox from "expo-checkbox";
 import Icon from "react-native-vector-icons/FontAwesome";
+import UserContext from "../contexts/UserContext";  
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
 };
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
+  const { login } = useContext(UserContext); 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
-      const userData = {
-        username,
-        password,
-      };
-      const response = await authApi.login(userData);
-
-      if (response.status === 200) {
-        setAuthToken(response.data.accessToken, response.data.refreshToken);
-        navigation.navigate("Home");
-      } else {
-        throw new Error("Failed to login");
-      }
+      await login(username, password);
+      navigation.navigate("Home");
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "Failed to login. Please try again.");
@@ -45,75 +35,73 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleForgotPassword = () => {
-    // Logic to handle forgot password action
     Alert.alert("Reset Password", "Reset password link sent to your email.");
   };
 
   return (
     <View style={styles.maincontainer}>
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/PixelPalslogo.png")}
-          style={styles.logo}
-        />
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../assets/PixelPalslogo.png")}
+            style={styles.logo}
+          />
+        </View>
+        <Text style={styles.headline}>Login</Text>
+        <View style={styles.inputContainer}>
+          <Icon name="user" size={22} color={colors.background} />
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            onChangeText={setUsername}
+            value={username}
+            placeholderTextColor={colors.textPrimary}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Icon name="lock" size={22} color={colors.background} />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry
+            placeholderTextColor={colors.textPrimary}
+          />
+        </View>
+        <View style={styles.ForgotPasswordContainer}>
+          <TouchableOpacity onPress={handleForgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Login" onPress={handleLogin} color={colors.background} />
+          <View style={styles.dividerContainer}>
+            <Text style={styles.dividerText}>or Login via</Text>
+          </View>
+          <Icon.Button
+            name="google"
+            backgroundColor="#DB4437"
+            style={styles.button}
+          >
+            <Text style={styles.text}>Login with Google</Text>
+          </Icon.Button>
+          <Icon.Button
+            name="facebook"
+            backgroundColor="#3B5998"
+            style={styles.button}
+          >
+            <Text style={styles.text}>Login with Facebook</Text>
+          </Icon.Button>
+        </View>
       </View>
-      <Text style={styles.headline}>Login</Text>
-      <View style={styles.inputContainer}>
-        <Icon name="user" size={22} color={colors.background} />
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          onChangeText={setUsername}
-          value={username}
-          placeholderTextColor={colors.textPrimary}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Icon name="lock" size={22} color={colors.background} />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          onChangeText={setPassword}
-          value={password}
-          secureTextEntry
-          placeholderTextColor={colors.textPrimary}
-        />
-      </View>
-      <View style={styles.ForgotPasswordContainer}>
-        <TouchableOpacity onPress={handleForgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
+      <View style={styles.bottompagesignup}>
+        <Text style={styles.label}>Don't have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+          <Text style={styles.signupText}>SIGN UP</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button title="Login" onPress={handleLogin} color={colors.background} />
-        <View style={styles.dividerContainer}>
-          <Text style={styles.dividerText}>or Login via</Text>
-        </View>
-        <Icon.Button
-          name="google"
-          backgroundColor="#DB4437"
-          style={styles.button}
-        >
-          <Text style={styles.text}>Login with Google</Text>
-        </Icon.Button>
-        <Icon.Button
-          name="facebook"
-          backgroundColor="#3B5998"
-          style={styles.button}
-        >
-          <Text style={styles.text}>Login with Facebook</Text>
-        </Icon.Button>
-      </View>
     </View>
-     <View style={styles.bottompagesignup}>
-     <Text style={styles.label}>Don't have an account?</Text>
-     <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-       <Text style={styles.signupText}>SIGN UP</Text>
-     </TouchableOpacity>
-   </View>
-   </View>
-    
   );
 };
 
@@ -124,7 +112,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.secondary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -209,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
-    marginBottom: 20,
+    padding: 20,
   },
   signupText: {
     color: colors.background,

@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.secondary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '800',
     color: colors.background, 
-    
+ 
   },
   input: {
     flex: 1,
@@ -172,12 +171,12 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
   },
   image: {
-    width: 120,
-    height: 120,
-    borderRadius: 80,
+    width: 100,
+    height: 100,
+    borderRadius: 60,
     borderColor: colors.background,
     borderWidth: 3,
-    marginTop: 20,
+    marginBottom: 20,
   },
   imageContainer: {
     alignItems: 'center',

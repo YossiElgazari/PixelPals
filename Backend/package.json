@@ -5,8 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "start": "tsc && node dist/server.js",
-    "dev": "shx cp .env.dev .env && nodemon ./server.ts",
-    "test": "shx cp .env.test .env && jest --detectOpenHandles --forceExit",
+    "dev": "shx cp .env.dev .env && nodemon ./src/server.ts",
+    "test": "shx cp .env.test .env && tsc && jest --runInBand --coverage --detectOpenHandles --forceExit",
     "lint": "eslint . --ext .ts"
   },
   "author": "Yossi Elgazari",

@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import OnboardingScreen from './views/onboardingScreen';
+import { StatusBar } from 'react-native';
+import { UserProvider } from './contexts/UserContext';
 import LoginScreen from './views/loginScreen';
 import RegisterScreen from './views/registerScreen';
-import BottomTabNavigator from './components/bottomTabNavigator'; 
-import { StatusBar } from 'react-native';
+import BottomTabNavigator from './components/bottomTabNavigator';
+import { colors } from './styles/themeStyles';
 
 export type RootStackParamList = {
-  Onboarding: undefined;
   Login: undefined;
   Register: undefined;
   Home: undefined;
@@ -20,36 +19,41 @@ export type RootStackParamList = {
   AddPost: undefined;
 };
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App: React.FC = () => {
-  const [isOnboardingCompleted, setIsOnboardingCompleted] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    AsyncStorage.getItem('onboardingCompleted').then(value => {
-      if (value !== null) {
-        setIsOnboardingCompleted(true);
+    const checkAuthentication = async () => {
+      const user = await AsyncStorage.getItem('user');
+      const userToken = user ? JSON.parse(user).accessToken : null;
+      if (userToken) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
       }
-    });
+    };
+    checkAuthentication();
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isOnboardingCompleted ? (
-          // If onboarding is completed, proceed to Login or other initial route
-          <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
+    <UserProvider>
+      <NavigationContainer>
+        <StatusBar backgroundColor={colors.background} />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {isAuthenticated ? (
             <Stack.Screen name="Home" component={BottomTabNavigator} />
-          </>
-        ) : (
-          // If onboarding is not completed, show the Onboarding screen
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
-  );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+          ) : (
+            <>
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserProvider>
+  );
 };
 
 export default App;

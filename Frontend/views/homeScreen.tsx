@@ -1,48 +1,75 @@
-import React, { useRef } from "react";
-import { View, StyleSheet, ScrollView, Animated, Image } from "react-native";
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState, useEffect, useRef } from "react";
+import { View, StyleSheet, Animated, FlatList } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
+import Post from "../components/post";
+import { postApi } from "../api/postApi";
+import LoadingSpinner from "../components/loading";
+
+interface Post {
+  _id: string;
+  content: string;
+  photo?: string;
+  likes: string[];
+  isLikedByCurrentUser: boolean;
+}
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
 };
 
-const HomeScreen: React.FC<Props> = () => {
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  // translateY will animate the whole header off the screen without resizing it
+  // Animation for the header
   const headerTranslateY = scrollY.interpolate({
     inputRange: [0, 50],
-    outputRange: [0, -50], // Start moving up when scrolling down
+    outputRange: [0, -50],
     extrapolate: "clamp",
   });
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await postApi.fetchPosts();
+        setPosts(response.data.posts); // Ensure response.data.posts is correctly typed
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+        setLoading(false);
+      }
+    };
+    setLoading(true);
+    //fetchPosts();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollContainer}
-        contentContainerStyle={styles.contentContainer}
-        onScroll={(event) => {
-          scrollY.setValue(event.nativeEvent.contentOffset.y);
-        }}
-        scrollEventThrottle={16}
-      >
-        {/* Dummy content to enable scrolling */}
-        <View style={styles.content} />
-      </ScrollView>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <Animated.FlatList
+          data={posts}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => <Post post={item} />}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          contentContainerStyle={styles.contentContainer}
+          scrollEventThrottle={16}
+        />
+      )}
 
       <Animated.View
         style={[
           styles.header,
-          {
-            transform: [{ translateY: headerTranslateY }],
-          },
+          { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
-        <Image
-          source={require("../assets/PixelPalstext.png")}
-          style={styles.logo}
-        />
+        {/* Optional header content */}
       </Animated.View>
     </View>
   );
@@ -53,14 +80,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#121212",
   },
-  scrollContainer: {
-    flex: 1,
-  },
   contentContainer: {
-    paddingTop: 50, 
-  },
-  content: {
-    height: 1500, 
+    paddingTop: 50,
   },
   header: {
     position: "absolute",
@@ -68,14 +89,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: "#121212",
+    height: 50,
+    zIndex: 1000,
     alignItems: "center",
     justifyContent: "center",
-    height: 50,
-  },
-  logo: {
-    width: 200,
-    height: 25,
-    resizeMode: "contain",
   },
 });
 

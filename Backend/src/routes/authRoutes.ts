@@ -111,14 +111,14 @@ router.post("/login", login);
 /**
  * @swagger
  * /auth/logout:
- *   get:
+ *   post:
  *     summary: Logout the current user
  *     tags: [Auth]
  *     responses:
  *       200:
  *         description: User logged out successfully
  */
-router.get("/logout", protect, logout);
+router.post("/logout", protect, logout);
 
 /**
  * @swagger

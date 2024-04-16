@@ -6,6 +6,8 @@ import userRoutes from "./routes/userRoutes";
 import postRoutes from "./routes/postRoutes";
 import bodyParser from "body-parser";
 import { Express } from "express";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
 
 const env = dotenv.config();
 if (env.error) {
@@ -14,6 +16,27 @@ if (env.error) {
 
 const DATABASE_URL = process.env.DATABASE_URL;
 const app = express();
+
+if (process.env.NODE_ENV == "development") {
+  const options = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+        title: "PixelPals API Backend",
+        version: "1.0.1",
+        description: "List all the routes of the backend REST API...",
+      },
+      servers: [
+        {
+          url: "http://localhost:" + process.env.PORT,
+        },
+      ],
+    },
+    apis: ["./src/routes/*.ts"],
+  };
+  const specs = swaggerJsDoc(options);
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+}
 
 const initApp = () => {
   const promise = new Promise<Express>((resolve) => {

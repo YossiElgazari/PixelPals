@@ -91,7 +91,7 @@ describe("User Authentication Tests", () => {
     const res = await request(app)
       .put("/user/reset-password")
       .set("Authorization", `Bearer ${user.accessToken}`)
-      .send({ oldPassword: user.password, newPassword: "12345"});
+      .send({ oldPassword: user.password, newPassword: "12345" });
     expect(res.statusCode).toEqual(200);
     console.log("Update User Password Test Finish:\n", res.body);
   });
@@ -107,6 +107,28 @@ describe("User Authentication Tests", () => {
     console.log("Create Post Test Finish:\n", res.body);
   });
 
+  test("Get All Posts", async () => {
+    console.log("Get All Posts Test Start:\n", user);
+    const res = await request(app)
+      .get("/post")
+      .set("Authorization", `Bearer ${user.accessToken}`);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toBeInstanceOf(Array);
+    console.log("Get All Posts Test Finish:\n", res.body);
+  });
+
+  test("Token Expired", async () => {
+    console.log("Token Expired Test Start:\n", user);
+    console.log("Time out\n");
+    await new Promise((r) => setTimeout(r, 5000));  // Delay to simulate token expiration
+    const res = await request(app)
+      .get("/user/profile")
+      .set("Authorization", `Bearer ${user.accessToken}`);
+    expect(res.statusCode).not.toEqual(200);
+    console.log("Token Expired Test Finish:\n", res.body);
+  }, 10000);  // Increase timeout to 10000 milliseconds (10 seconds)
+  
+
   test("Refresh Token", async () => {
     console.log("Refresh Token Test Start:\n", user);
     const res = await request(app)
@@ -120,13 +142,26 @@ describe("User Authentication Tests", () => {
     console.log("Refresh Token Test Finish:\n", res.body);
   });
 
+  test("Create Post2", async () => {
+    console.log("Create Post Test Start:\n", user);
+    const res = await request(app)
+      .post("/post")
+      .set("Authorization", `Bearer ${user.accessToken}`)
+      .send({ content: "This is a test post2" });
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toHaveProperty("content");
+    console.log("Create Post Test Finish:\n", res.body);
+  });
+
   test("Logout User", async () => {
     console.log("Logout User Test Start:\n", user);
     const res = await request(app)
       .get("/auth/logout")
-      .set("Authorization", `Bearer ${user.accessToken}`);
+      .set("Authorization", `Bearer ${user.accessToken}`)
+      .send({ refreshToken: user.refreshToken });
+      console.log("Logout User Test Finish:\n", res.body);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({ message: "User logged out successfully" });
-    console.log("Logout User Test Finish:\n", res.body);
+
   });
 });
