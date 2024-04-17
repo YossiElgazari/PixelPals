@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Animated, FlatList } from "react-native";
+import { View, StyleSheet, Animated, FlatList, Text } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import Post from "../components/post";
@@ -8,8 +8,9 @@ import LoadingSpinner from "../components/loading";
 
 interface Post {
   _id: string;
+  owner: string;
   content: string;
-  photo?: string;
+  photo: string;
   likes: string[];
   isLikedByCurrentUser: boolean;
 }
@@ -34,22 +35,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const fetchPosts = async () => {
       try {
         const response = await postApi.fetchPosts();
-        setPosts(response.data.posts); // Ensure response.data.posts is correctly typed
+        setPosts(response.data.posts);
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
         setLoading(false);
       }
     };
-    setLoading(true);
-    //fetchPosts();
+    fetchPosts();
   }, []);
 
   return (
     <View style={styles.container}>
       {loading ? (
         <LoadingSpinner />
-      ) : (
+      ) : posts.length > 0 ? (
         <Animated.FlatList
           data={posts}
           keyExtractor={(item) => item._id}
@@ -61,6 +61,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           contentContainerStyle={styles.contentContainer}
           scrollEventThrottle={16}
         />
+      ) : (
+        <View style={styles.noPostsContainer}>
+          <Text style={styles.noPostsText}>No posts yet, upload something!</Text>
+        </View>
       )}
 
       <Animated.View
@@ -69,7 +73,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
-        {/* Optional header content */}
+        <Text style={styles.headerText}>PixelPals</Text>
       </Animated.View>
     </View>
   );
@@ -83,6 +87,15 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 50,
   },
+  noPostsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noPostsText: {
+    color: 'white',
+    fontSize: 18,
+  },
   header: {
     position: "absolute",
     top: 0,
@@ -93,6 +106,10 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     alignItems: "center",
     justifyContent: "center",
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 20,
   },
 });
 

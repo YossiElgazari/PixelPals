@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi, setAuthToken } from '../api/authApi';
+import LoadingSpinner from '../components/loading';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 interface User {
   accessToken: string;
@@ -12,16 +13,14 @@ interface UserContextType {
   user: User | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;  // No parameter expected
-  refreshTokens: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const defaultState: UserContextType = {
   user: null,
   loading: true,
-  login: async () => {},
-  logout: async () => {},
-  refreshTokens: async () => {}
+  login: async () => { },
+  logout: async () => { },
 };
 
 const UserContext = createContext<UserContextType>(defaultState);
@@ -36,7 +35,7 @@ export const UserProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const loadUserData = async () => {
-      const userData = await AsyncStorage.getItem('user');
+      const userData = await EncryptedStorage.getItem('user');
       if (userData) {
         const currentUser: User = JSON.parse(userData);
         setUser(currentUser);
@@ -53,8 +52,12 @@ export const UserProvider = ({ children }: Props) => {
       const response = await authApi.login({ username, password });
       if (response.status === 200) {
         const { accessToken, refreshToken } = response.data;
-        const userData = { accessToken, refreshToken, username };
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
+        const userData = { username, accessToken, refreshToken };
+        await Promise.all([
+          EncryptedStorage.setItem('accessToken', accessToken),
+          EncryptedStorage.setItem('refreshToken', refreshToken),
+          EncryptedStorage.setItem('user', JSON.stringify(userData))
+        ]);
         setUser(userData);
         setAuthToken(accessToken, refreshToken);
       } else {
@@ -68,45 +71,29 @@ export const UserProvider = ({ children }: Props) => {
   };
 
   const logout = async () => {
+    setLoading(true);
     try {
       if (user) {
         await authApi.logout({ refreshToken: user.refreshToken });
-        await AsyncStorage.removeItem('user');
+        await EncryptedStorage.removeItem('user');
+        await EncryptedStorage.removeItem('accessToken');
+        await EncryptedStorage.removeItem('refreshToken');
         setUser(null);
         setAuthToken('', '');
       }
     } catch (error) {
       console.error('Logout error:', error);
     }
+    setLoading(false);
   };
 
-  const refreshTokens = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        const { refreshToken } = JSON.parse(userData);
-        const response = await authApi.refreshTokens(refreshToken);
-        if (response.status === 200) {
-          const { accessToken, newRefreshToken } = response.data;
-          await AsyncStorage.setItem('user', JSON.stringify({ ...JSON.parse(userData), accessToken, refreshToken: newRefreshToken }));
-          setUser(prev => ({ ...prev!, accessToken, refreshToken: newRefreshToken }));
-          setAuthToken(accessToken, newRefreshToken);
-        } else {
-          throw new Error("Failed to refresh tokens");
-        }
-      }
-    } catch (error) {
-      console.error('Refresh token error:', error);
-      alert('Session expired. Please login again.');
-      await logout();
-    }
-  };
 
   return (
-    <UserContext.Provider value={{ user, loading, login, logout, refreshTokens }}>
+    <UserContext.Provider value={{ user, loading, login, logout }}>
+      {loading && <LoadingSpinner />}
       {children}
     </UserContext.Provider>
   );
 };
 
-export default UserContext;
+  export default UserContext;

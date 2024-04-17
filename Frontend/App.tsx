@@ -26,14 +26,16 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      const user = await AsyncStorage.getItem('user');
-      const userToken = user ? JSON.parse(user).accessToken : null;
-      if (userToken) {
-        setIsAuthenticated(true);
-      } else {
+      try {
+        const userJson = await AsyncStorage.getItem('user');
+        const user = userJson ? JSON.parse(userJson) : null;
+        setIsAuthenticated(!!user?.accessToken); 
+      } catch (error) {
+        console.error('Failed to retrieve user data', error);
         setIsAuthenticated(false);
       }
     };
+
     checkAuthentication();
   }, []);
 

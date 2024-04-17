@@ -55,7 +55,6 @@ export const setAuthToken = (accessToken: string, refreshToken: string) => {
     clientApi.defaults.headers.common["refreshToken"] = refreshToken;
     console.log("Auth tokens set:", { accessToken, refreshToken });
   } else {
-    console.log("Deleting auth tokens");
     delete clientApi.defaults.headers.common["Authorization"];
     delete clientApi.defaults.headers.common["refreshToken"];
   }
