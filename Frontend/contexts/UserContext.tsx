@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { authApi, setAuthToken } from '../api/authApi';
 import LoadingSpinner from '../components/loading';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import * as SecureStore from 'expo-secure-store';
 
 interface User {
   accessToken: string;
@@ -35,7 +35,7 @@ export const UserProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const loadUserData = async () => {
-      const userData = await EncryptedStorage.getItem('user');
+      const userData = await SecureStore.getItemAsync('user');
       if (userData) {
         const currentUser: User = JSON.parse(userData);
         setUser(currentUser);
@@ -54,9 +54,9 @@ export const UserProvider = ({ children }: Props) => {
         const { accessToken, refreshToken } = response.data;
         const userData = { username, accessToken, refreshToken };
         await Promise.all([
-          EncryptedStorage.setItem('accessToken', accessToken),
-          EncryptedStorage.setItem('refreshToken', refreshToken),
-          EncryptedStorage.setItem('user', JSON.stringify(userData))
+          SecureStore.setItemAsync('accessToken', accessToken),
+          SecureStore.setItemAsync('refreshToken', refreshToken),
+          SecureStore.setItemAsync('user', JSON.stringify(userData))
         ]);
         setUser(userData);
         setAuthToken(accessToken, refreshToken);
@@ -64,20 +64,22 @@ export const UserProvider = ({ children }: Props) => {
         throw new Error("Failed to login");
       }
     } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed. Please check your credentials.');
+      throw error; 
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
-
+};
+  
   const logout = async () => {
     setLoading(true);
     try {
       if (user) {
         await authApi.logout({ refreshToken: user.refreshToken });
-        await EncryptedStorage.removeItem('user');
-        await EncryptedStorage.removeItem('accessToken');
-        await EncryptedStorage.removeItem('refreshToken');
+        await Promise.all([
+          SecureStore.deleteItemAsync('user'),
+          SecureStore.deleteItemAsync('accessToken'),
+          SecureStore.deleteItemAsync('refreshToken')
+        ]);
         setUser(null);
         setAuthToken('', '');
       }

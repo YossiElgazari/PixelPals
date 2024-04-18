@@ -26,8 +26,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      await login(username, password);
-      navigation.navigate("Home");
+      await login(username, password).then(() => {
+        navigation.navigate("Home");
+      }).catch((error) => {
+        console.error(error);
+        Alert.alert("Error", "Failed to login. Please try again.");
+      });
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "Failed to login. Please try again.");
@@ -83,15 +87,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             name="google"
             backgroundColor="#DB4437"
             style={styles.button}
-          >
+            onPress={() => Alert.alert("Oops","In Progress..") }
+            >
             <Text style={styles.text}>Login with Google</Text>
-          </Icon.Button>
-          <Icon.Button
-            name="facebook"
-            backgroundColor="#3B5998"
-            style={styles.button}
-          >
-            <Text style={styles.text}>Login with Facebook</Text>
           </Icon.Button>
         </View>
       </View>
@@ -152,6 +150,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     gap: 20,
+    marginBottom: 30,
   },
   label: {
     color: colors.textPrimary,
@@ -196,7 +195,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
-    padding: 20,
+    padding: 10,
+    
   },
   signupText: {
     color: colors.background,

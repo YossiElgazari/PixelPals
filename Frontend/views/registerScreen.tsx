@@ -31,8 +31,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      const userData = { username, email, password, passwordHash: password };
-      console.log(userData);
+      const userData = { username, email, password, passwordHash: password};
       const response = await authApi.register(userData);
       if (response.status === 201) {
         Alert.alert('Success', 'User registered successfully');
@@ -60,9 +59,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       quality: 1,
     });
 
-    if (!result.canceled && 'uri' in result) {
-      setProfilePic(result.uri as string);
-    }
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProfilePic(result.assets[0].uri);
+    }    
   };
 
   return (
@@ -70,8 +69,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.headline}>Create Account</Text>
       <View style={styles.imageContainer}>
-      <Image source={profilePic ? { uri: profilePic as string } : defaultProfilePic} style={styles.image} />
-      </View>
+  <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+    <Image source={profilePic ? { uri: profilePic } : defaultProfilePic} style={styles.image} />
+    <Icon name="plus" size={24} style={styles.editIcon}/>
+  </TouchableOpacity>
+</View>
+
       <View style={styles.inputsContainer}>
       <View style={styles.inputContainer}>
       <Icon name="user" size={22} color={colors.background} />
@@ -106,12 +109,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       />
       </View>
       </View>
-      <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Pick Profile Picture</Text>
-      </TouchableOpacity>
-      {profilePic && (
-        <Image source={{ uri: profilePic }} style={styles.image} />
-      )}
       <View style={styles.buttonContainer}>
         <Button
           title="Register"
@@ -141,10 +138,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headline: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: '800',
     color: colors.background, 
- 
+    marginBottom: 30,
+
   },
   input: {
     flex: 1,
@@ -153,9 +151,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   button: {
-    backgroundColor: colors.background, 
-    padding: 5,
-    borderRadius: 5,
+    borderRadius: 60,
     marginBottom: 20,
   },
   buttonText: {
@@ -164,7 +160,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '80%',
     flexDirection: 'column',
-    gap: 20,
+
   },
   label: {
     color: colors.textPrimary,
@@ -176,10 +172,12 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderColor: colors.background,
     borderWidth: 3,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   imageContainer: {
     alignItems: 'center',
+    justifyContent: 'center', 
+    position: 'relative', 
   },
   inputContainer: {
     flexDirection: "row",
@@ -192,6 +190,7 @@ const styles = StyleSheet.create({
   inputsContainer: {
     width: '100%',
     alignItems: 'center',
+    marginBottom: 20,
   },
   dividerContainer: {
     flexDirection: "column",
@@ -209,13 +208,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   signinText: {
     color: colors.background,
     fontSize: 14,
     fontWeight: '800',
   },
+  imageButton: {
+    marginBottom: 20,
+    position: 'relative', // Needed to position the icon correctly
+  },
+  editIcon: {
+    position: 'absolute', // Position over the image
+    bottom: 10, // Distance from the bottom of the container
+    right: 5, // Distance from the right of the container
+    backgroundColor: 'transparent',
+    color: colors.textPrimary,
+  }
+  
 });
 
 export default RegisterScreen;
