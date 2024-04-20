@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,30 +10,49 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { RootStackParamList } from "../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAuth } from "../context/AuthContext";
+import { userApi } from "../api/userApi";
+import { RootStackParamList } from "../../App";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
 };
 
 const ProfileScreen: React.FC<Props> = ({ navigation }) => {
+  const { onLogout } = useAuth();
+  const [userInfo, setUserInfo] = useState({
+    username: "",
+    bio: "",
+    profileImageUrl: require("../../assets/defaultprofile.jpg"), // Adjusted for initial state
+    postsCount: 0,
+    followersCount: 0,
+    followingCount: 0,
+  });
 
-  const userInfo = {
-    username: "thegeek",
-    profileImageUrl: require("../assets/defaultprofile.jpg"),
-    postsCount: 123,
-    followersCount: 440,
-    followingCount: 558,
-    bio: "Journalist\nTech journalist and city",
-  };
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await userApi.getUserProfile();
+        setUserInfo(prevState => ({
+          ...prevState,
+          username: response.data.username,
+          profileImageUrl: response.data.profileImageUrl, // Update the type to string
+          bio: response.data.bio,
+        }));
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   const handleLogout = () => {
-   
+    onLogout!();
   };
 
   const handleEditProfile = () => {
-    //navigation.navigate("EditProfile"); // Ensure you have an "EditProfile" route defined in your navigation setup
+    //navigation.navigate("EditProfile");
   };
 
   return (
@@ -64,11 +83,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         </View>
         <Text style={styles.username}>{userInfo.username}</Text>
         <Text style={styles.bio}>{userInfo.bio}</Text>
-        <Button
-          title="Edit Profile"
-          onPress={handleEditProfile}
-          color="cyan"
-        />
+        <Button title="Edit Profile" onPress={handleEditProfile} color="cyan" />
         {/* Grid of posts or other content */}
       </ScrollView>
     </SafeAreaView>

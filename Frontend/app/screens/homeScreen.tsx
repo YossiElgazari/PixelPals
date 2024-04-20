@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Animated, FlatList, Text } from "react-native";
+import { View, StyleSheet, Animated, FlatList, Image, Text, ImageBackground } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../App";
+import { RootStackParamList } from "../../App";
 import Post from "../components/post";
 import { postApi } from "../api/postApi";
 import LoadingSpinner from "../components/loading";
+import { colors } from "../styles/themeStyles";
 
 interface Post {
   _id: string;
@@ -35,7 +36,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const fetchPosts = async () => {
       try {
         const response = await postApi.fetchPosts();
-        setPosts(response.data.posts);
+        setPosts(response.data);
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -46,6 +47,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   return (
+    <ImageBackground source={require("../../assets/imagebg.png")} style={styles.backgroundImage}>
     <View style={styles.container}>
       {loading ? (
         <LoadingSpinner />
@@ -63,7 +65,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
       ) : (
         <View style={styles.noPostsContainer}>
-          <Text style={styles.noPostsText}>No posts yet, upload something!</Text>
+          <Text style={styles.noPostsText}>
+            No posts yet, upload something!
+          </Text>
         </View>
       )}
 
@@ -73,27 +77,33 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           { transform: [{ translateY: headerTranslateY }] },
         ]}
       >
-        <Text style={styles.headerText}>PixelPals</Text>
+        <Image source={require("../../assets/PixelPalstext2.png")} style={styles.headerText}/> 
       </Animated.View>
     </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1, 
+    width: null, 
+    height: null, 
+  },
   container: {
     flex: 1,
-    backgroundColor: "#121212",
+    backgroundColor: 'transparent',
   },
   contentContainer: {
     paddingTop: 50,
   },
   noPostsContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   noPostsText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
   },
   header: {
@@ -101,15 +111,16 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#121212",
+    backgroundColor: colors.background,
     height: 50,
     zIndex: 1000,
     alignItems: "center",
     justifyContent: "center",
   },
   headerText: {
-    color: 'white',
-    fontSize: 20,
+    width: 200,
+    height: 50,
+    resizeMode: "contain",
   },
 });
 

@@ -7,6 +7,7 @@ export const protect = async (
   next: NextFunction
 ) => {
   try {
+    console.log("Authenticating user...", req.headers);
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     if (token == null) {

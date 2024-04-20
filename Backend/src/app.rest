@@ -1,12 +1,11 @@
 
 
 
-
-POST http://localhost:3000/post
+POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjIyYzJkN2ZkOTBjMDRjNTUzNTQxZTMiLCJpYXQiOjE3MTM1Njg1OTcsImV4cCI6MTcxMzU3MjE5N30.586l6I3n25r3UPGdpWFSrw0o9SuN-15Y5P4rZMzXsKA",
-    "propertyName": "propertyValue"
+    "username": "test",
+    "email": "test@admin.com",
+    "password": "test"
 }
-

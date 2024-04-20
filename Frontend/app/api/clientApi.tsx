@@ -1,7 +1,7 @@
 import axios from "axios";
-import { getRereshToken, secureTokens } from "../utility/secureStorage";
+import { getRefreshToken, secureTokens } from "../utility/secureStorage";
 
-const API_URL = "http://192.168.1.23:3000";
+export const API_URL = "http://192.168.1.23:3000";
 
 const clientApi = axios.create({
   baseURL: API_URL,
@@ -14,9 +14,9 @@ clientApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response.status === 401) {
       originalRequest._retry = true;
-      const refreshToken = await getRereshToken();
+      const refreshToken = await getRefreshToken();
       if (refreshToken) {
         try {
           const { data } = await clientApi.post("/auth/refresh", {

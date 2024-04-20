@@ -24,7 +24,7 @@ const LoadingSpinner = () => {
   return (
     <Animated.View style={styles.container}>
       <Animated.Image
-        source={require('../assets/PixelPalslogoclear.png')}
+        source={require('../../assets/PixelPalslogoclear.png')}
         style={[styles.logo, { transform: [{ rotate: spin }] }]}
       />
     </Animated.View>

@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { View, TextInput, FlatList, StyleSheet } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
-
+import React, { useState } from "react";
+import { View, TextInput, FlatList, StyleSheet } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../App";
 
 const SearchScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   /// SEARCH FUNCTION
   const handleSearch = (query: string) => {
@@ -30,12 +29,12 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', 
+    backgroundColor: "#121212",
   },
   searchInput: {
     fontSize: 18,
-    backgroundColor: '#222', 
-    color: '#fff', 
+    backgroundColor: "#222",
+    color: "#fff",
     padding: 10,
     borderRadius: 10,
     margin: 10,

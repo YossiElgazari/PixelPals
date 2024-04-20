@@ -10,9 +10,10 @@ import {
   Button,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../App";
+import { RootStackParamList } from "../../App";
 import { colors } from "../styles/themeStyles";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { useAuth } from "../context/AuthContext";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -21,9 +22,14 @@ type Props = {
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { onLogin } = useAuth();
 
   const handleLogin = async () => {
-   
+    const result = await onLogin!(username, password);
+    navigation.navigate("Home");
+    if (result && result.error) {
+      alert(result.msg);
+    }
   };
 
   const handleForgotPassword = () => {
@@ -35,7 +41,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
-            source={require("../assets/PixelPalslogo.png")}
+            source={require("../../assets/PixelPalslogo.png")}
             style={styles.logo}
           />
         </View>

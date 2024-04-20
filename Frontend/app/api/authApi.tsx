@@ -5,7 +5,7 @@ export const authApi = {
   register: async (data: {
     username: string;
     email: string;
-    passwordHash: string;
+    password: string;
     profilePicture?: string;
   }) => {
     console.log("Attempting to register user:", data);
@@ -58,36 +58,6 @@ export const authApi = {
       throw error;
     }
   },
-  refreshTokens: async (refreshToken: string) => {
-    console.log(
-      "Attempting to refresh tokens with refreshToken:",
-      refreshToken
-    );
-    try {
-      clientApi.defaults.headers.common["authorization"] = refreshToken;
-      const response = await clientApi.get("/auth/refresh");
-      console.log("Token refresh successful:", response.data);
-      return response;
-    } catch (error: any) {
-      console.error(
-        "Token refresh failed:",
-        error.response ? error.response.data : error
-      );
-      throw error;
-    }
-  },
 };
 
-export const setAuthToken = (accessToken: string, refreshToken: string) => {
-  console.log("Setting auth tokens");
-  if (accessToken && refreshToken) {
-    clientApi.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${accessToken}`;
-    clientApi.defaults.headers.common["refreshToken"] = refreshToken;
-    console.log("Auth tokens set:", { accessToken, refreshToken });
-  } else {
-    delete clientApi.defaults.headers.common["Authorization"];
-    delete clientApi.defaults.headers.common["refreshToken"];
-  }
-};
+

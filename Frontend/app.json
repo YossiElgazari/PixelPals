@@ -16,7 +16,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "usesNonExtemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -28,8 +31,7 @@
       "favicon": "./assets/PixelPalslogoclear.png"
     },
     "plugins": [
-      "expo-secure-store",
-      "expo-facebook"
+      "expo-secure-store"
     ]
   }
 }

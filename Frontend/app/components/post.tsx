@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { postApi } from '../api/postApi'; // Ensure this import is correct
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import { postApi } from "../api/postApi"; // Ensure this import is correct
+import Icon from "react-native-vector-icons/FontAwesome";
 
 type PostProps = {
   post: {
@@ -28,10 +35,10 @@ const Post: React.FC<PostProps> = ({ post }) => {
         await postApi.likePost(post._id);
       }
     } catch (error) {
-      console.error('Error liking the post:', error);
+      console.error("Error liking the post:", error);
       // Revert the like state in case of failure
       setIsLiked(!isLiked);
-      Alert.alert('Error', 'Failed to update like. Please try again.');
+      Alert.alert("Error", "Failed to update like. Please try again.");
     }
   };
 
@@ -42,7 +49,12 @@ const Post: React.FC<PostProps> = ({ post }) => {
         <Image source={{ uri: post.photo }} style={styles.image} />
       )}
       <TouchableOpacity onPress={handleLike}>
-        <Icon name="heart" size={25} color={isLiked ? 'red' : 'grey'} style={styles.likeIcon} />
+        <Icon
+          name="heart"
+          size={25}
+          color={isLiked ? "red" : "grey"}
+          style={styles.likeIcon}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -51,10 +63,10 @@ const Post: React.FC<PostProps> = ({ post }) => {
 const styles = StyleSheet.create({
   postContainer: {
     padding: 10,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginBottom: 10,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
@@ -64,13 +76,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
     marginTop: 10,
     borderRadius: 5,
   },
   likeIcon: {
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 10,
   },
 });
