@@ -13,29 +13,17 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { colors } from "../styles/themeStyles";
 import Icon from "react-native-vector-icons/FontAwesome";
-import UserContext from "../contexts/UserContext";  
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
 };
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const { login } = useContext(UserContext); 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    try {
-      await login(username, password).then(() => {
-        navigation.navigate("Home");
-      }).catch((error) => {
-        console.error(error);
-        Alert.alert("Error", "Failed to login. Please try again.");
-      });
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "Failed to login. Please try again.");
-    }
+   
   };
 
   const handleForgotPassword = () => {
@@ -79,7 +67,11 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Login" onPress={handleLogin} color={colors.background} />
+          <Button
+            title="Login"
+            onPress={handleLogin}
+            color={colors.background}
+          />
           <View style={styles.dividerContainer}>
             <Text style={styles.dividerText}>or Login via</Text>
           </View>
@@ -87,8 +79,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             name="google"
             backgroundColor="#DB4437"
             style={styles.button}
-            onPress={() => Alert.alert("Oops","In Progress..") }
-            >
+            onPress={() => Alert.alert("Oops", "In Progress..")}
+          >
             <Text style={styles.text}>Login with Google</Text>
           </Icon.Button>
         </View>
@@ -196,12 +188,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     padding: 10,
-    
   },
   signupText: {
     color: colors.background,
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 });
 

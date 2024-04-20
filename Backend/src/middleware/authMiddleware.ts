@@ -1,12 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-export const protect = async (req: AuthRequest, res: Response,next: NextFunction) => {
+export const protect = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    console.log("Protect:\n", req.headers);
-    const token = req.header("Authorization").split(" ")[1];
-    if (!token) {
-      return res.status(401).send("Unauthorized");
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    if (token == null) {
+      return res.sendStatus(401);
     }
     jwt.verify(token, process.env.TOKEN_SECRET, (err, data: jwt.JwtPayload) => {
       if (err) {

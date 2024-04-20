@@ -12,6 +12,7 @@ class BaseController<ModelType extends mongoose.Document> {
     // Get all items
     async getAll(req: Request, res: Response): Promise<void> {
         try {
+            console.log(`Getting all ${this.modelName}s`);
             const items = await this.itemModel.find();
             res.status(200).json(items);
         } catch (error) {

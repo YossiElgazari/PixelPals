@@ -35,7 +35,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       const response = await authApi.register(userData);
       if (response.status === 201) {
         Alert.alert('Success', 'User registered successfully');
-        navigation.navigate('Login');
+        navigation.navigate('Home');
       } else {
         throw new Error('Failed to register');
       }

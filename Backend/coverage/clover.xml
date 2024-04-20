@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1713289760851" clover="3.2.0">
-  <project timestamp="1713289760851" name="All files">
-    <metrics statements="306" coveredstatements="151" conditionals="53" coveredconditionals="5" methods="41" coveredmethods="26" elements="400" coveredelements="182" complexity="0" loc="306" ncloc="306" packages="5" files="11" classes="11"/>
+<coverage generated="1713479705443" clover="3.2.0">
+  <project timestamp="1713479705443" name="All files">
+    <metrics statements="306" coveredstatements="140" conditionals="53" coveredconditionals="1" methods="41" coveredmethods="22" elements="400" coveredelements="163" complexity="0" loc="306" ncloc="306" packages="5" files="11" classes="11"/>
     <package name="src">
       <metrics statements="33" coveredstatements="29" conditionals="2" coveredconditionals="0" methods="5" coveredmethods="4"/>
       <file name="app.ts" path="C:\Users\Yossi\Desktop\PixelPals\Backend\src\app.ts">
@@ -42,9 +42,9 @@
       </file>
     </package>
     <package name="src.controllers">
-      <metrics statements="207" coveredstatements="60" conditionals="48" coveredconditionals="3" methods="30" coveredmethods="16"/>
+      <metrics statements="207" coveredstatements="51" conditionals="48" coveredconditionals="0" methods="30" coveredmethods="12"/>
       <file name="authController.ts" path="C:\Users\Yossi\Desktop\PixelPals\Backend\src\controllers\authController.ts">
-        <metrics statements="71" coveredstatements="49" conditionals="17" coveredconditionals="3" methods="13" coveredmethods="13"/>
+        <metrics statements="71" coveredstatements="36" conditionals="17" coveredconditionals="0" methods="13" coveredmethods="8"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
@@ -62,29 +62,29 @@
         <line num="35" count="0" type="stmt"/>
         <line num="37" count="0" type="stmt"/>
         <line num="42" count="1" type="stmt"/>
-        <line num="43" count="1" type="cond" truecount="3" falsecount="1"/>
-        <line num="44" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="45" count="0" type="stmt"/>
-        <line num="47" count="1" type="stmt"/>
-        <line num="48" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="49" count="0" type="stmt"/>
-        <line num="51" count="1" type="stmt"/>
-        <line num="52" count="1" type="stmt"/>
-        <line num="53" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="54" count="0" type="stmt"/>
-        <line num="56" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="56" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="57" count="0" type="stmt"/>
-        <line num="61" count="1" type="stmt"/>
-        <line num="64" count="1" type="stmt"/>
-        <line num="65" count="1" type="stmt"/>
-        <line num="66" count="1" type="stmt"/>
-        <line num="68" count="1" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
         <line num="70" count="0" type="stmt"/>
         <line num="71" count="0" type="stmt"/>
         <line num="77" count="1" type="stmt"/>
-        <line num="78" count="2" type="stmt"/>
-        <line num="82" count="2" type="stmt"/>
-        <line num="88" count="2" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
         <line num="91" count="1" type="stmt"/>
         <line num="92" count="1" type="stmt"/>
         <line num="93" count="1" type="stmt"/>
@@ -155,7 +155,7 @@
         <line num="80" count="1" type="stmt"/>
       </file>
       <file name="postController.ts" path="C:\Users\Yossi\Desktop\PixelPals\Backend\src\controllers\postController.ts">
-        <metrics statements="38" coveredstatements="4" conditionals="2" coveredconditionals="0" methods="6" coveredmethods="1"/>
+        <metrics statements="38" coveredstatements="8" conditionals="2" coveredconditionals="0" methods="6" coveredmethods="2"/>
         <line num="2" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
@@ -165,10 +165,10 @@
         <line num="17" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="27" count="0" type="stmt"/>
-        <line num="31" count="0" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
+        <line num="26" count="6" type="stmt"/>
+        <line num="27" count="6" type="stmt"/>
+        <line num="31" count="6" type="stmt"/>
+        <line num="32" count="6" type="stmt"/>
         <line num="34" count="0" type="stmt"/>
         <line num="35" count="0" type="stmt"/>
         <line num="41" count="0" type="stmt"/>
@@ -264,23 +264,23 @@
       </file>
     </package>
     <package name="src.middleware">
-      <metrics statements="16" coveredstatements="13" conditionals="2" coveredconditionals="1" methods="3" coveredmethods="3"/>
+      <metrics statements="16" coveredstatements="11" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="3"/>
       <file name="authMiddleware.ts" path="C:\Users\Yossi\Desktop\PixelPals\Backend\src\middleware\authMiddleware.ts">
-        <metrics statements="16" coveredstatements="13" conditionals="2" coveredconditionals="1" methods="3" coveredmethods="3"/>
+        <metrics statements="16" coveredstatements="11" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="3"/>
         <line num="2" count="1" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="cond" truecount="0" falsecount="1"/>
+        <line num="4" count="7" type="stmt"/>
+        <line num="5" count="7" type="stmt"/>
+        <line num="6" count="7" type="stmt"/>
+        <line num="7" count="7" type="stmt"/>
+        <line num="8" count="7" type="cond" truecount="0" falsecount="1"/>
         <line num="9" count="0" type="stmt"/>
-        <line num="11" count="2" type="stmt"/>
-        <line num="12" count="2" type="cond" truecount="1" falsecount="0"/>
-        <line num="13" count="1" type="stmt"/>
-        <line num="14" count="1" type="stmt"/>
-        <line num="16" count="1" type="stmt"/>
-        <line num="17" count="1" type="stmt"/>
-        <line num="18" count="1" type="stmt"/>
+        <line num="11" count="7" type="stmt"/>
+        <line num="12" count="7" type="cond" truecount="0" falsecount="1"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="7" type="stmt"/>
+        <line num="17" count="7" type="stmt"/>
+        <line num="18" count="7" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
       </file>
@@ -299,9 +299,9 @@
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="16" count="1" type="stmt"/>
-        <line num="30" count="4" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
         <line num="54" count="1" type="stmt"/>
-        <line num="55" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="55" count="3" type="cond" truecount="1" falsecount="0"/>
         <line num="57" count="1" type="stmt"/>
         <line num="58" count="1" type="stmt"/>
         <line num="59" count="1" type="stmt"/>
