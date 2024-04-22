@@ -2,11 +2,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import * as SecureStorage from "../utility/secureStorage";
 import { authApi } from "../api/authApi";
+import  clientApi from "../api/clientApi";
 
-const setAuthToken = (accessToken: string) => {
+export const setAuthToken = (accessToken: string) => {
   console.log("Setting auth token:", accessToken);
   if (accessToken) {
     axios.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
+    clientApi.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
     console.log("Auth tokens set:", { accessToken });
   } else {
     delete axios.defaults.headers.common["Authorization"];
@@ -106,9 +108,9 @@ export const AuthProvider = ({ children }: any) => {
 
   const logout = async () => {
     try {
-      const response = await authApi.logout({
-        refreshToken: await SecureStorage.getRefreshToken(),
-      });
+      const refreshToken = await SecureStorage.getRefreshToken();
+      console.log("Logging out with refresh token:", refreshToken);
+      const response = await authApi.logout({ refreshToken });
       await SecureStorage.RemoveTokens();
       delete axios.defaults.headers.common["Authorization"];
       setAuthState({

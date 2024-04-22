@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Animated, FlatList, Image, Text, ImageBackground } from "react-native";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { View, StyleSheet, Animated, FlatList, Image, Text, RefreshControl } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 import Post from "../components/post";
@@ -23,6 +23,7 @@ type Props = {
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   // Animation for the header
@@ -32,70 +33,85 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     extrapolate: "clamp",
   });
 
+  const fetchPosts = useCallback(async () => {
+    try {
+      const response = await postApi.fetchPosts();
+      setPosts(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await postApi.fetchPosts();
-        setPosts(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-        setLoading(false);
-      }
-    };
     fetchPosts();
+  }, [fetchPosts]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchPosts().then(() => setRefreshing(false));
+  }, [fetchPosts]);
+
+  const onEndReached = useCallback(() => {
+    // Implement fetching additional posts
+    console.log("Load more posts...");
   }, []);
 
   return (
-    <ImageBackground source={require("../../assets/imagebg.png")} style={styles.backgroundImage}>
-    <View style={styles.container}>
-      {loading ? (
-        <LoadingSpinner />
-      ) : posts.length > 0 ? (
-        <Animated.FlatList
-          data={posts}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <Post post={item} />}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
-          )}
-          contentContainerStyle={styles.contentContainer}
-          scrollEventThrottle={16}
-        />
-      ) : (
-        <View style={styles.noPostsContainer}>
-          <Text style={styles.noPostsText}>
-            No posts yet, upload something!
-          </Text>
-        </View>
-      )}
+      <View style={styles.container}>
+        {loading ? (
+          <LoadingSpinner />
+        ) : posts.length > 0 ? (
+          <Animated.FlatList
+            data={posts}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => <Post post={item} />}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: true }
+            )}
+            contentContainerStyle={styles.contentContainer}
+            scrollEventThrottle={16}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.5}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor="#fff"
+              />
+            }
+          />
+        ) : (
+          <View style={styles.noPostsContainer}>
+            <Text style={styles.noPostsText}>
+              No posts yet, upload something!
+            </Text>
+          </View>
+        )}
 
-      <Animated.View
-        style={[
-          styles.header,
-          { transform: [{ translateY: headerTranslateY }] },
-        ]}
-      >
-        <Image source={require("../../assets/PixelPalstext2.png")} style={styles.headerText}/> 
-      </Animated.View>
-    </View>
-    </ImageBackground>
+        <Animated.View
+          style={[
+            styles.header,
+            { transform: [{ translateY: headerTranslateY }] },
+          ]}
+        >
+          <Image source={require("../../assets/PixelPalstextclear.png")} style={styles.headerText}/> 
+        </Animated.View>
+      </View>
   );
 };
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1, 
-    width: null, 
-    height: null, 
-  },
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: colors.background,
   },
   contentContainer: {
-    paddingTop: 50,
+    paddingTop: 70,
   },
   noPostsContainer: {
     flex: 1,
@@ -118,7 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerText: {
-    width: 200,
+    width: 150,
     height: 50,
     resizeMode: "contain",
   },

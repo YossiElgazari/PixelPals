@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,11 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
 import { userApi } from "../api/userApi";
 import { RootStackParamList } from "../../App";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import MyButton from "../components/myButton";
+import { colors } from "../styles/themeStyles";
+import ResetPasswordScreen from "./resetPasswordScreen";
+import { useNavigation } from "@react-navigation/native";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
@@ -21,6 +26,7 @@ type Props = {
 
 const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const { onLogout } = useAuth();
+  const { showActionSheetWithOptions } = useActionSheet();
   const [userInfo, setUserInfo] = useState({
     username: "",
     bio: "",
@@ -34,12 +40,12 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     const fetchUserInfo = async () => {
       try {
         const response = await userApi.getUserProfile();
-        setUserInfo(prevState => ({
-          ...prevState,
+        setUserInfo({
+          ...userInfo,
           username: response.data.username,
           profileImageUrl: response.data.profileImageUrl, // Update the type to string
           bio: response.data.bio,
-        }));
+        });
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       }
@@ -47,18 +53,72 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     fetchUserInfo();
   }, []);
 
-  const handleLogout = () => {
-    onLogout!();
+  const handleEditProfile = () => {
+    navigation.navigate("EditProfile");
   };
 
-  const handleEditProfile = () => {
-    //navigation.navigate("EditProfile");
+  const openActionSheet = () => {
+    const options = ["Logout", "Delete User", "Reset Password", "Cancel"];
+    const destructiveButtonIndex = 1;
+    const cancelButtonIndex = 3;
+
+    showActionSheetWithOptions(
+      {
+        title: "Options",
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+        containerStyle: styles.dotsMenu,
+        textStyle:styles.dotsText,
+        
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          confirmAction("Logout");
+        } else if (buttonIndex === 1) {
+          confirmAction("Delete User");
+        } else if (buttonIndex === 2) {
+          navigation.navigate('ResetPassword');
+        }
+      }
+    );
+  };
+
+  const confirmAction = (action: string) => {
+    const options = ["Yes", "No"];
+    const destructiveButtonIndex = 0;
+    const cancelButtonIndex = 1;
+
+    showActionSheetWithOptions(
+      {
+        title: `Are you sure you want to ${action.toLowerCase()}?`,
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          if (action === "Logout") {
+            onLogout!();
+          } else if (action === "Delete User") {
+            // Add your logic here to delete the user
+          } else if (action === "Reset Password") {
+
+          }
+        }
+      }
+    );
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.profileHeader}>
+          <View style={styles.actionIconContainer}>
+            <TouchableOpacity onPress={openActionSheet} style={{alignContent: "center"}}>
+              <Icon name="ellipsis-v" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
           <Image
             source={userInfo.profileImageUrl}
             style={styles.profileImage}
@@ -77,13 +137,12 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.statLabel}>Following</Text>
             </View>
           </View>
-          <TouchableOpacity onPress={handleLogout}>
-            <Icon name="sign-out" size={24} color="white" />
-          </TouchableOpacity>
         </View>
-        <Text style={styles.username}>{userInfo.username}</Text>
-        <Text style={styles.bio}>{userInfo.bio}</Text>
-        <Button title="Edit Profile" onPress={handleEditProfile} color="cyan" />
+        <View style={styles.userTable}>
+          <Text style={styles.username}>{userInfo.username}</Text>
+          <Text style={styles.bio}>{userInfo.bio}</Text>
+          <MyButton text="Edit Profile" onPress={handleEditProfile}/>
+        </View>
         {/* Grid of posts or other content */}
       </ScrollView>
     </SafeAreaView>
@@ -97,25 +156,31 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     flexDirection: "row",
-    justifyContent: "space-around",
     alignItems: "center",
-    paddingVertical: 15,
+    padding: 15,
+    position: "relative",
+    paddingBottom: 5,
+  },
+  actionIconContainer: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: "white",
+    marginRight: 15,
   },
   statsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: 15,
     alignItems: "center",
   },
   statItem: {
     alignItems: "center",
-    marginHorizontal: 10,
   },
   statNumber: {
     color: "white",
@@ -125,20 +190,35 @@ const styles = StyleSheet.create({
   statLabel: {
     color: "grey",
     fontSize: 14,
+    minWidth: 70,
+    textAlign: "center",
+  },
+  userTable: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: 15,
+    paddingBottom: 10,
+    gap: 5,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "grey",
   },
   username: {
     color: "white",
     fontWeight: "bold",
     fontSize: 18,
-    paddingHorizontal: 15,
-    marginTop: 10,
   },
   bio: {
     color: "white",
     fontSize: 14,
-    paddingHorizontal: 15,
-    marginBottom: 15,
   },
+  dotsMenu: {
+    alignItems: "center",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+
+  },
+  dotsText:{
+  }
 });
 
 export default ProfileScreen;

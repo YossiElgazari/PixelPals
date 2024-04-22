@@ -7,7 +7,7 @@ export const protect = async (
   next: NextFunction
 ) => {
   try {
-    console.log("Authenticating user...", req.headers);
+    console.log("protect Authenticating user...", req.headers);
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     if (token == null) {
@@ -16,7 +16,7 @@ export const protect = async (
     jwt.verify(token, process.env.TOKEN_SECRET, (err, data: jwt.JwtPayload) => {
       if (err) {
         console.error("Error verifying token:", err);
-        return res.sendStatus(401);
+        return res.sendStatus(403);
       }
       const id = data._id;
       req.user = { _id: id };

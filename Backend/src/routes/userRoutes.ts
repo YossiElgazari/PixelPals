@@ -31,4 +31,7 @@ router.put(
   UserController.updateprofilepicture.bind(UserController)
 );
 
+// Get user by ID
+router.get("/:userId", protect, UserController.getuserbyid.bind(UserController));
+
 export default router;

@@ -16,6 +16,7 @@ import { colors } from "../styles/themeStyles";
 import * as ImagePicker from "expo-image-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useAuth } from "../context/AuthContext";
+import MyButton from "../components/myButton";
 
 const defaultProfilePic = require("../../assets/defaultprofile.jpg");
 
@@ -85,43 +86,42 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
         <View style={styles.inputsContainer}>
           <View style={styles.inputContainer}>
-            <Icon name="user" size={22} color={colors.background} />
+            <Icon name="user" size={22} color={colors.primary} />
             <TextInput
               style={styles.input}
               placeholder="Username"
               onChangeText={setUsername}
               value={username}
-              placeholderTextColor={colors.textPrimary}
+              placeholderTextColor={colors.white}
             />
           </View>
           <View style={styles.inputContainer}>
-            <Icon name="envelope" size={18} color={colors.background} />
+            <Icon name="envelope" size={18} color={colors.primary} />
             <TextInput
               style={styles.input}
               placeholder="Email"
               onChangeText={setEmail}
               value={email}
               keyboardType="email-address"
-              placeholderTextColor={colors.textPrimary}
+              placeholderTextColor={colors.white}
             />
           </View>
           <View style={styles.inputContainer}>
-            <Icon name="lock" size={22} color={colors.background} />
+            <Icon name="lock" size={22} color={colors.primary} />
             <TextInput
               style={styles.input}
               placeholder="Password"
               onChangeText={setPassword}
               value={password}
               secureTextEntry
-              placeholderTextColor={colors.textPrimary}
+              placeholderTextColor={colors.white}
             />
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <Button
-            title="Register"
+          <MyButton
+            text="Register"
             onPress={handleRegister}
-            color={colors.background}
           />
         </View>
       </View>
@@ -138,7 +138,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   maincontainer: {
     flex: 1,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
@@ -148,28 +148,28 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 34,
     fontWeight: "800",
-    color: colors.background,
+    color: colors.primary,
     marginBottom: 30,
   },
   input: {
     flex: 1,
     paddingHorizontal: 10,
     height: 40,
-    color: colors.textPrimary,
+    color: colors.white,
   },
   button: {
     borderRadius: 60,
     marginBottom: 20,
   },
   buttonText: {
-    color: colors.textPrimary,
+    color: colors.white,
   },
   buttonContainer: {
     width: "80%",
     flexDirection: "column",
   },
   label: {
-    color: colors.textPrimary,
+    color: colors.white,
     fontFamily: "Roboto",
   },
   image: {
@@ -190,24 +190,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "80%",
     borderBottomWidth: 2,
-    borderBottomColor: colors.background,
+    borderBottomColor: colors.primary,
     marginBottom: 20,
   },
   inputsContainer: {
     width: "100%",
     alignItems: "center",
     marginBottom: 20,
-  },
-  dividerContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    opacity: 0.8,
-  },
-  dividerText: {
-    fontSize: 14,
-    fontWeight: "400",
-    textAlign: "center",
-    color: "#FFFFFF",
   },
   bottompagesignin: {
     flexDirection: "row",
@@ -217,7 +206,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   signinText: {
-    color: colors.background,
+    color: colors.primary,
     fontSize: 14,
     fontWeight: "800",
   },
@@ -227,10 +216,10 @@ const styles = StyleSheet.create({
   },
   editIcon: {
     position: "absolute", // Position over the image
-    bottom: 10, // Distance from the bottom of the container
-    right: 5, // Distance from the right of the container
+    bottom: 15, // Distance from the bottom of the container
+    right: 7, // Distance from the right of the container
     backgroundColor: "transparent",
-    color: colors.textPrimary,
+    color: colors.white,
   },
 });
 

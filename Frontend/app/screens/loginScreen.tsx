@@ -14,6 +14,7 @@ import { RootStackParamList } from "../../App";
 import { colors } from "../styles/themeStyles";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useAuth } from "../context/AuthContext";
+import MyButton from "../components/myButton";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -41,30 +42,30 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
-            source={require("../../assets/PixelPalslogo.png")}
+            source={require("../../assets/PixelPalslogoclearv2.png")}
             style={styles.logo}
           />
         </View>
         <Text style={styles.headline}>Login</Text>
         <View style={styles.inputContainer}>
-          <Icon name="user" size={22} color={colors.background} />
+          <Icon name="user" size={22} color={colors.primary} />
           <TextInput
             style={styles.input}
             placeholder="Username"
             onChangeText={setUsername}
             value={username}
-            placeholderTextColor={colors.textPrimary}
+            placeholderTextColor={colors.white}
           />
         </View>
         <View style={styles.inputContainer}>
-          <Icon name="lock" size={22} color={colors.background} />
+          <Icon name="lock" size={22} color={colors.primary} />
           <TextInput
             style={styles.input}
             placeholder="Password"
             onChangeText={setPassword}
             value={password}
             secureTextEntry
-            placeholderTextColor={colors.textPrimary}
+            placeholderTextColor={colors.white}
           />
         </View>
         <View style={styles.ForgotPasswordContainer}>
@@ -73,17 +74,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.buttonContainer}>
-          <Button
-            title="Login"
+          <MyButton
+            text="Login"
             onPress={handleLogin}
-            color={colors.background}
           />
           <View style={styles.dividerContainer}>
             <Text style={styles.dividerText}>or Login via</Text>
           </View>
           <Icon.Button
             name="google"
-            backgroundColor="#DB4437"
+            backgroundColor={colors.background80}
             style={styles.button}
             onPress={() => Alert.alert("Oops", "In Progress..")}
           >
@@ -104,7 +104,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   maincontainer: {
     flex: 1,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 30,
   },
   logo: {
     width: 150,
@@ -126,21 +126,21 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 32,
     fontWeight: "800",
-    color: colors.background,
+    color: colors.white,
     marginBottom: 40,
   },
   input: {
     flex: 1,
     paddingHorizontal: 10,
     height: 40,
-    color: colors.textPrimary,
+    color: colors.white,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     width: "80%",
     borderBottomWidth: 2,
-    borderBottomColor: colors.background,
+    borderBottomColor: colors.primary,
     marginBottom: 20,
   },
   buttonContainer: {
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   label: {
-    color: colors.textPrimary,
+    color: colors.white,
     fontFamily: "Roboto",
   },
   ForgotPasswordContainer: {
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   forgotPasswordText: {
-    color: colors.background,
+    color: colors.white,
     fontSize: 12,
   },
   button: {
@@ -172,10 +172,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 2,
+    borderColor: colors.google,
   },
   text: {
     fontSize: 15,
-    color: "#ffffff", // Ensures text is easily readable on the button
+    color: colors.white,
   },
   dividerContainer: {
     flexDirection: "column",
@@ -186,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "400",
     textAlign: "center",
-    color: "#FFFFFF",
+    color: colors.white,
   },
   bottompagesignup: {
     flexDirection: "row",
@@ -196,7 +198,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   signupText: {
-    color: colors.background,
+    color: colors.primary,
     fontSize: 14,
     fontWeight: "800",
   },

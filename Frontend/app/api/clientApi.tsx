@@ -14,19 +14,22 @@ clientApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401) {
+    if (error.response.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = await getRefreshToken();
+      console.log("Refresh Token:", refreshToken);
+      axios.defaults.headers["Authorization"] = "Bearer " + refreshToken; 
+      clientApi.defaults.headers["Authorization"] = "Bearer " + refreshToken; 
       if (refreshToken) {
         try {
-          const { data } = await clientApi.post("/auth/refresh", {
-            refreshToken,
-          });
+          const { data } = await clientApi.get("/auth/refresh");
+          console.log("New Tokens:", data);
           await secureTokens(data.accessToken, data.refreshToken);
-          axios.defaults.headers.common["Authorization"] =
+          axios.defaults.headers["Authorization"] =
             "Bearer " + data.accessToken;
           originalRequest.headers["Authorization"] =
             "Bearer " + data.accessToken;
+          clientApi.defaults.headers["Authorization"] = "Bearer " + data.accessToken;
           return axios(originalRequest);
         } catch (refreshError) {
           console.error("Refresh Token Error:", refreshError);
