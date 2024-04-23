@@ -4,12 +4,12 @@
     "slug": "PixelPals",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/PixelPalslogo.png",
+    "icon": "./assets/PixelPalslogoclearv2.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/PixelPalslogoandtext.png",
+      "image": "./assets/PixelPalslogoclearv2.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1292ff"
+      "backgroundColor": "#121212"
     },
     "scheme": "pixelpals",
     "assetBundlePatterns": [
@@ -23,8 +23,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/PixelPalslogo.png",
-        "backgroundColor": "#1292ff"
+        "foregroundImage": "./assets/PixelPalslogoclearv2.png",
+        "backgroundColor": "#121212"
       }
     },
     "web": {

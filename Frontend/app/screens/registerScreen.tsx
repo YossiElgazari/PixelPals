@@ -122,6 +122,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           <MyButton
             text="Register"
             onPress={handleRegister}
+            textStyle={{color: colors.primary, fontWeight: "bold"}}
+            buttonStyle={{borderColor: colors.white}}
           />
         </View>
       </View>
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 34,
     fontWeight: "800",
-    color: colors.primary,
+    color: colors.white,
     marginBottom: 30,
   },
   input: {
@@ -173,11 +175,11 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 60,
-    borderColor: colors.background,
-    borderWidth: 3,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderColor: colors.white,
+    borderWidth: 2,
     marginBottom: 10,
   },
   imageContainer: {
@@ -203,6 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
+    marginTop: 50,
     marginBottom: 10,
   },
   signinText: {
@@ -216,8 +219,8 @@ const styles = StyleSheet.create({
   },
   editIcon: {
     position: "absolute", // Position over the image
-    bottom: 15, // Distance from the bottom of the container
-    right: 7, // Distance from the right of the container
+    bottom: 20, // Distance from the bottom of the container
+    right: 10, // Distance from the right of the container
     backgroundColor: "transparent",
     color: colors.white,
   },

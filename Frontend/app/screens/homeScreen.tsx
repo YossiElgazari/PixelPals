@@ -99,7 +99,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             { transform: [{ translateY: headerTranslateY }] },
           ]}
         >
-          <Image source={require("../../assets/PixelPalstextclear.png")} style={styles.headerText}/> 
+          <Image source={require("../../assets/PixelPalstextclear.png")} style={styles.headerImg}/> 
         </Animated.View>
       </View>
   );
@@ -127,13 +127,15 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background80,
     height: 50,
     zIndex: 1000,
     alignItems: "center",
     justifyContent: "center",
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.grey
   },
-  headerText: {
+  headerImg: {
     width: 150,
     height: 50,
     resizeMode: "contain",

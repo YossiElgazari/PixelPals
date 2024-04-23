@@ -77,6 +77,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           <MyButton
             text="Login"
             onPress={handleLogin}
+            buttonStyle={styles.buttonLogin}
           />
           <View style={styles.dividerContainer}>
             <Text style={styles.dividerText}>or Login via</Text>
@@ -169,11 +170,16 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 10,
     paddingHorizontal: 15,
-    borderRadius: 5,
+    borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
     borderColor: colors.google,
+  },
+  buttonLogin:{
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderColor: colors.primary,
   },
   text: {
     fontSize: 15,
@@ -196,6 +202,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     padding: 10,
+    marginTop: 50,
   },
   signupText: {
     color: colors.primary,

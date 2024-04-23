@@ -39,7 +39,7 @@ export const Layout = () => {
   const { authState } = useAuth();
   return (
     <NavigationContainer>
-      <StatusBar barStyle="light-content" backgroundColor={colors.background} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background80} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {authState?.authenticated ? (
           <>
