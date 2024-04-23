@@ -19,6 +19,9 @@ package-lock.json
 .env.test
 .env.dev
 
+# test coverage
+/coverage
+
 # Logs
 *.log
 
