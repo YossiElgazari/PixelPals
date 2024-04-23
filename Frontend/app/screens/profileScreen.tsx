@@ -1,25 +1,16 @@
-import React, { useEffect, useState, useContext } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Button,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
 import { userApi } from "../api/userApi";
-import { RootStackParamList } from "../../App";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import MyButton from "../components/myButton";
 import { colors } from "../styles/themeStyles";
-import ResetPasswordScreen from "./resetPasswordScreen";
-import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import { RootStackParamList } from "../../App"
+import * as Clipboard from 'expo-clipboard';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
@@ -31,28 +22,36 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState({
     username: "",
     bio: "",
-    profileImageUrl: require("../../assets/defaultprofile.jpg"), // Adjusted for initial state
+    profileImageUrl: "", // Initialize as empty string to be replaced by fetched URL
     postsCount: 0,
     followersCount: 0,
     followingCount: 0,
   });
 
-
   useEffect(() => {
+    let isMounted = true; // flag to track component mount status
+
     const fetchUserInfo = async () => {
       try {
         const response = await userApi.getUserProfile();
-        setUserInfo({
-          ...userInfo,
-          username: response.data.username,
-          profileImageUrl: response.data.profileImageUrl, // Update the type to string
-          bio: response.data.bio,
-        });
+        if (isMounted) {
+          setUserInfo(prevState => ({
+            ...prevState,
+            username: response.data.username,
+            profileImageUrl: response.data.profileImageUrl || prevState.profileImageUrl, // Use fetched URL or keep existing
+            bio: response.data.bio,
+          }));
+        }
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       }
     };
+
     fetchUserInfo();
+
+    return () => {
+      isMounted = false; // set flag as false when component unmounts
+    };
   }, []);
 
   const handleEditProfile = () => {
@@ -107,16 +106,16 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             onLogout!();
           } else if (action === "Delete User") {
             // Add your logic here to delete the user
+          }
         }
       }
-    }
     )
   };
 
   const ActionSheetProfile = () => {
     const options = ["Choose From Gallery", "Take Photo", "Cancel"];
-    const cancelButtonIndex = 3;
-    
+    const cancelButtonIndex = 2;
+
     showActionSheetWithOptions(
       {
         options,
@@ -126,42 +125,59 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
-          handleEditProfile();
+          chooseFromGallery();
         } else if (buttonIndex === 1) {
           takePhoto();
-        } else if (buttonIndex === 2) {
-          viewProfilePicture();
         }
       }
     );
   };
 
+  const chooseFromGallery = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Denied", "Permission to access camera roll is required!");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+    if (!result.canceled && result.assets[0].uri) {
+      setUserInfo({ ...userInfo, profileImageUrl: result.assets[0].uri });
+      try {
+        await userApi.updateProfilePicture({ profilePicture: result.assets[0].uri });
+      } catch (error) {
+        console.error("Failed to update profile image:", error);
+      }
+    }
+  }
+
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      alert("Permission to access camera is required!");
+      Alert.alert("Permission Denied", "Permission to access camera is required!");
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
     });
-    if (!result.canceled) {
-      setUserInfo({ ...userInfo, profileImageUrl: result.uri });
+    if (!result.canceled && result.assets[0].uri) {
+      setUserInfo({ ...userInfo, profileImageUrl: result.assets[0].uri });
+      try {
+        await userApi.updateProfilePicture({ profilePicture: result.assets[0].uri });
+      } catch (error) {
+        console.error("Failed to update profile image:", error);
+      }
     }
-    try {
-      await userApi.updateProfilePicture(result.uri);
-    } catch (error) {
-      console.error("Failed to update profile image:", error);
-    }
-    // reload the user info
-    const response = await userApi.getUserProfile();
-    setUserInfo({
-      ...userInfo,
-      profileImageUrl: response.data.profileImageUrl,
-    });
   };
 
+  const copyProfileURL = () => {
+    const profileURL = "https://pixelpals.com/profile/" + userInfo.username;
+    Clipboard.setStringAsync(profileURL);
+    Alert.alert("Profile URL Copied", "Your profile URL has been copied to the clipboard!");
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -177,10 +193,14 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           </View>
           <TouchableOpacity style={styles.imageButton} onPress={ActionSheetProfile}>
             <Image
-              source={userInfo.profileImageUrl}
+              source={
+                userInfo.profileImageUrl
+                  ? { uri: userInfo.profileImageUrl }
+                  : require('../../assets/defaultprofile.jpg') // Use the default image if no profileImageUrl is present
+              }
               style={styles.profileImage}
-            />          
-            </TouchableOpacity>
+            />
+          </TouchableOpacity>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statNumber}>{userInfo.postsCount}</Text>
@@ -201,14 +221,15 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           {userInfo.bio ? <Text style={styles.bio}>{userInfo.bio}</Text> : null}
         </View>
         <View style={styles.buttonsTable}>
-          <MyButton text="Edit Profile" onPress={handleEditProfile} buttonStyle={styles.editButton} textStyle={styles.textEditButton}/>
-          <MyButton text="Share Profile" onPress={() => {}} buttonStyle={styles.editButton} textStyle={styles.textEditButton}/>
+          <MyButton text="Edit Profile" onPress={handleEditProfile} buttonStyle={styles.editButton} textStyle={styles.textEditButton} />
+          <MyButton text="Share Profile" onPress={copyProfileURL} buttonStyle={styles.editButton} textStyle={styles.textEditButton} />
         </View>
         {/* Grid of posts or other content */}
       </ScrollView>
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -218,8 +239,9 @@ const styles = StyleSheet.create({
   profileHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
-    paddingBottom: 5,
+    padding: 20,
+    paddingTop: 5,
+    paddingBottom: 7,
     position: "relative",
     backgroundColor: colors.background80,
   },
@@ -229,12 +251,12 @@ const styles = StyleSheet.create({
     top: 10,
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: 85,
+    height: 85,
     borderRadius: 50,
     borderWidth: 2,
     borderColor: "white",
-    marginRight: 15,
+    marginRight: 10,
   },
   statsContainer: {
     flexDirection: "row",

@@ -7,10 +7,10 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { postApi } from "../api/postApi";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { colors } from "../styles/themeStyles";
 import { userApi } from "../api/userApi";
+import { postApi } from "../api/postApi";
 
 type PostProps = {
   post: {
@@ -42,7 +42,7 @@ const getUserDetails = async (ownerId: string) => {
 
 const Post: React.FC<PostProps> = ({ post }) => {
   const [isLiked, setIsLiked] = useState(post.isLikedByCurrentUser);
-  const [user, setUser] = useState({ username: '', profilePicture: null });
+  const [user, setUser] = useState({ username: "", profilePicture: null });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +77,11 @@ const Post: React.FC<PostProps> = ({ post }) => {
     <View style={styles.postContainer}>
       <View style={styles.userInfo}>
         <Image
-          source={user.profilePicture ? { uri: user.profilePicture } : require("../../assets/defaultprofile.jpg")}
+          source={
+            user.profilePicture
+              ? { uri: user.profilePicture }
+              : require("../../assets/defaultprofile.jpg")
+          }
           style={styles.profilePic}
         />
         <Text style={styles.username}>{user.username}</Text>
@@ -86,52 +90,58 @@ const Post: React.FC<PostProps> = ({ post }) => {
       {post.photo && (
         <Image source={{ uri: post.photo }} style={styles.image} />
       )}
-      <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
-        <Icon
-          name="heart"
-          size={25}
-          color={isLiked ? "red" : "grey"}
-        />
-      </TouchableOpacity>
+      <View style={styles.likeCommentContainer}>
+        <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
+          <Icon name="heart" size={25} color={isLiked ? "red" : "grey"} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   postContainer: {
-    padding: 15,
     backgroundColor: colors.background,
     borderBottomWidth: 0.5,
     borderBottomColor: colors.grey,
+    marginBottom: 10,
   },
   userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    paddingTop: 0,
   },
   profilePic: {
     width: 40,
     height: 40,
+    borderColor: colors.white,
+    borderWidth: 1,
     borderRadius: 20,
     marginRight: 10,
-    borderWidth: 1,
-    borderColor: colors.white
   },
   username: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.white,
   },
   content: {
     fontSize: 16,
     color: colors.white,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   image: {
     width: "100%",
-    height: 200,
-    borderRadius: 5,
+    height: 300,
+    resizeMode: "cover",
   },
-  likeButton: {
-    alignSelf: "center",
+  likeCommentContainer: {
+    flexDirection: "row",
+    padding: 10,
+    justifyContent: "center",
   },
+  likeButton: {},
+  commentButton: {},
 });
 
 export default Post;

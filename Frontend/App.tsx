@@ -28,8 +28,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const App = () => {
   return (
     <AuthProvider>
-       <ActionSheetProvider>
-      <Layout></Layout>
+      <ActionSheetProvider>
+          <Layout></Layout>
       </ActionSheetProvider>
     </AuthProvider>
   );
@@ -43,9 +43,9 @@ export const Layout = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {authState?.authenticated ? (
           <>
-          <Stack.Screen name="Home" component={BottomTabNavigator} />
-          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-          <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+            <Stack.Screen name="Home" component={BottomTabNavigator} />
+            <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+            <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           </>
         ) : (
           <>

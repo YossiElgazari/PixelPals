@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   contentContainer: {
-    paddingTop: 70,
+    paddingTop: 60,
   },
   noPostsContainer: {
     flex: 1,

@@ -4,7 +4,7 @@
     "slug": "PixelPals",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/PixelPalslogoclearv2.png",
+    "icon": "./assets/PixelPalslogoclearv3.png",
     "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/PixelPalslogoclearv2.png",
@@ -28,7 +28,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/PixelPalslogoclear.png"
+      "favicon": "./assets/PixelPalslogoclearv3.png"
     },
     "plugins": [
       "expo-secure-store"
