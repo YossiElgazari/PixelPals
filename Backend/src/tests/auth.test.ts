@@ -59,7 +59,6 @@ describe("User Authentication Tests", () => {
     console.log("Login User Test Finish:\n", res.body);
   });
 
-
   test("Token Expired", async () => {
     console.log("Token Expired Test Start:\n", user);
     console.log("Time out\n");

@@ -21,6 +21,18 @@ class BaseController<ModelType extends mongoose.Document> {
         }
     }
 
+    // Get all items by order of createdAt
+    async getAllByOrder(req: Request, res: Response): Promise<void> {
+        try {
+            console.log(`Getting all ${this.modelName}s by order of createdAt`);
+            const items = await this.itemModel.find().sort({ createdAt: -1 });
+            res.status(200).json(items);
+        } catch (error) {
+            console.error(`Error getting ${this.modelName}s by order of createdAt:`, error);
+            res.status(500).json({ message: `Error getting ${this.modelName}s by order of createdAt`, error: error.message });
+        }
+    }
+
     // Get single item by id
     async getById(req: Request, res: Response): Promise<void> {
         try {

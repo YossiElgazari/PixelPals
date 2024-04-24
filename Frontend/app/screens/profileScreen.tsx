@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback , useState } from "react";
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
 import { userApi } from "../api/userApi";
@@ -28,31 +29,36 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     followingCount: 0,
   });
 
-  useEffect(() => {
-    let isMounted = true; // flag to track component mount status
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-    const fetchUserInfo = async () => {
-      try {
-        const response = await userApi.getUserProfile();
-        if (isMounted) {
-          setUserInfo(prevState => ({
-            ...prevState,
-            username: response.data.username,
-            profileImageUrl: response.data.profileImageUrl || prevState.profileImageUrl, // Use fetched URL or keep existing
-            bio: response.data.bio,
-          }));
+      const fetchUserInfo = async () => {
+        try {
+          const response = await userApi.getUserProfile();
+          if (isActive) {
+            setUserInfo({
+              username: response.data.user.username,
+              profileImageUrl: response.data.user.profilePicture || userInfo.profileImageUrl,
+              bio: response.data.user.bio,
+              postsCount: response.data.postsCount,
+              followersCount: response.data.followersCount,
+              followingCount: response.data.followingCount,
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch user info:", error);
+          Alert.alert("Error", "Failed to load user information.");
         }
-      } catch (error) {
-        console.error("Failed to fetch user info:", error);
-      }
-    };
+      };
 
-    fetchUserInfo();
+      fetchUserInfo();
 
-    return () => {
-      isMounted = false; // set flag as false when component unmounts
-    };
-  }, []);
+      return () => {
+        isActive = false; // Cleanup flag on unmount
+      };
+    }, [])
+  );
 
   const handleEditProfile = () => {
     navigation.navigate("EditProfile");

@@ -1,11 +1,8 @@
 
 
 
-POST http://localhost:3000/auth/register
+GET http://localhost:3000/get/search/y
 Content-Type: application/json
 
 {
-    "username": "test",
-    "email": "test@admin.com",
-    "password": "test"
 }

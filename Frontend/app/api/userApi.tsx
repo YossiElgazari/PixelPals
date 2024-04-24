@@ -10,4 +10,9 @@ export const userApi = {
     clientApi.put("/user/reset-password", data),
   getUserById: (userId: string) => clientApi.get(`/user/${userId}`),
   deleteUser: () => clientApi.delete("/user"),
+  searchUsers: (query: string) => clientApi.get(`/user/search/${query}`),
+  followUser: (userId: string) => clientApi.put(`/user/follow/${userId}`),
+  unfollowUser: (userId: string) => clientApi.put(`/user/unfollow/${userId}`),
+  getFollowers: (userId: string) => clientApi.get(`/user/followers/${userId}`),
+  getFollowing: (userId: string) => clientApi.get(`/user/following/${userId}`),
 };

@@ -2,7 +2,7 @@ import request from "supertest";
 import { Express } from "express";
 import mongoose from "mongoose";
 import init from "../app";
-//import User from "../models/userModel";
+import User from "../models/userModel";
 //import Post from "../models/postModel";
 
 let app: Express;
@@ -38,6 +38,7 @@ const post: TestPost = {
 
 beforeAll(async () => {
   app = await init();
+  await User.deleteMany({ username: user.username });
   console.log("Before All");
 });
 
@@ -101,6 +102,14 @@ describe("User Posts Tests (Register and login at first)", () => {
     console.log("Unlike Post Test Finish:\n", res.body);
   });
 
+  test("Like Post", async () => {
+    console.log("Like Post Test Start:\n", user);
+    const res = await request(app)
+      .put(`/post/like/${post._id}`)
+      .set("Authorization", `Bearer ${user.accessToken}`);
+    expect(res.statusCode).toEqual(200);
+    console.log("Like Post Test Finish:\n", res.body);
+  });
 
   test("Get Post", async () => {
     console.log("Get Post Test Start:\n", user);

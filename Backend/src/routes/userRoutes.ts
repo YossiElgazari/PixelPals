@@ -32,6 +32,46 @@ router.put(
 );
 
 // Get user by ID
-router.get("/:userId", protect, UserController.getuserbyid.bind(UserController));
+router.get(
+  "/:userId",
+  protect,
+  UserController.getuserbyid.bind(UserController)
+);
+
+// Search users
+router.get(
+  "/search/:query",
+  protect,
+  UserController.searchusers.bind(UserController)
+);
+
+// Follow user
+router.put(
+  "/follow/:userId",
+  protect,
+  UserController.followUser.bind(UserController)
+);
+
+// Unfollow user
+router.put(
+  "/unfollow/:userId",
+  protect,
+  UserController.unfollowUser.bind(UserController)
+);
+
+// Get followers
+router.get(
+  "/followers/:userId",
+  protect,
+  UserController.getFollowers.bind(UserController)
+);
+
+// Get following
+router.get(
+  "/following/:userId",
+  protect,
+  UserController.getFollowing.bind(UserController)
+);
+
 
 export default router;

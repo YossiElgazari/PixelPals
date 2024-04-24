@@ -17,8 +17,8 @@ router.put('/:id', protect, PostController.update.bind(PostController));
 // Get all posts of a user
 router.get('/user',protect, PostController.getAllUserPosts.bind(PostController));
 
-// Get all posts
-router.get('/', protect,PostController.getAll.bind(PostController));
+// Get all posts by order of createdAt
+router.get('/', protect, PostController.getAllByOrder.bind(PostController));
 
 // Get a post
 router.get('/:id', protect, PostController.getById.bind(PostController));

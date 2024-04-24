@@ -91,4 +91,5 @@ class PostController extends BaseController<IPost> {
   }
 }
 
+
 export default new PostController();

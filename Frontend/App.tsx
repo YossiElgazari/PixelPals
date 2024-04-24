@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from "./app/context/AuthContext";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import ResetPasswordScreen from "./app/screens/resetPasswordScreen";
 import EditProfileScreen from "./app/screens/editProfileScreen";
+import UserProfileScreen from "./app/screens/userProfileScreen";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   AddPost: undefined;
   ResetPassword: undefined;
   EditProfile: undefined;
+  UserProfile: { userId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,6 +46,7 @@ export const Layout = () => {
         {authState?.authenticated ? (
           <>
             <Stack.Screen name="Home" component={BottomTabNavigator} />
+            <Stack.Screen name="UserProfile" component={UserProfileScreen} />
             <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           </>

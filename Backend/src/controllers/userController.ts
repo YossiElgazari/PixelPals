@@ -3,6 +3,8 @@ import User from "../models/userModel";
 import BaseController from "./baseController";
 import { IUser } from "../models/userModel";
 import { AuthRequest } from "../middleware/authMiddleware";
+import Follower from "../models/followerModel";
+import Post from "../models/postModel";
 
 interface ReqBody {
   username: string;
@@ -27,7 +29,15 @@ class UserController extends BaseController<IUser> {
         res.status(404).json({ message: "User not found" });
         return;
       }
-      res.status(200).json(user);
+      const postsCount = await Post.countDocuments({ user: userId });
+      const followersCount = await Follower.countDocuments({ following: userId });
+      const followingCount = await Follower.countDocuments({ user: userId });
+      res.status(200).json({
+        user,
+        postsCount,
+        followersCount,
+        followingCount
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log("getuserprofile error", error);
@@ -142,18 +152,42 @@ class UserController extends BaseController<IUser> {
     }
   }
 
-  async deleteuser(req: AuthRequest, res: Response): Promise<void> {
-        try {
-          const userId = req.user._id;
-          const user = await User.findById(userId);
-          if (!user) {
-            res.status(404).json({ message: "User not found" });
-            return;
-          }
-          await user.deleteOne();
-          res.status(200).json({ message: "User deleted" });
-    } catch (error: unknown) {
+  async deleteUser(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.user._id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      await Post.deleteMany({ user: userId });
+      await Follower.deleteMany({ $or: [{ user: userId }, { following: userId }] });
+
+
+      await User.deleteOne({ _id: userId });
+
+      res.status(200).json({ message: "User deleted" });
+    } catch (error) {
       console.log("deleteuser error", error);
+      if (error instanceof Error) {
+        res.status(500).json({ message: "Error message", error: error.message });
+      } else {
+        res.status(500).json({ message: "An unknown error occurred" });
+      }
+    }
+  }
+
+  async searchusers(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const query = req.params.query;
+      const users = await User.find({
+        username: { $regex: query, $options: "i" },
+      }).select("username profilePicture");
+      res.status(200).json(users);
+    } catch (error: unknown) {
+      console.log("searchusers error", error);
       if (error instanceof Error) {
         res
           .status(500)
@@ -161,6 +195,95 @@ class UserController extends BaseController<IUser> {
       } else {
         res.status(500).json({ message: "An unknown error occurred" });
       }
+    }
+  }
+
+  async followUser(req: AuthRequest, res: Response): Promise<void> {
+    const userId = req.user._id; // The authenticated user's ID
+    const { userId: followUserId } = req.params; // The user to follow
+
+    try {
+      if (userId === followUserId) {
+        res.status(400).json({ message: "You cannot follow yourself" });
+        return;
+      }
+
+      const alreadyFollowing = await Follower.findOne({
+        user: userId,
+        following: followUserId,
+      });
+
+      if (alreadyFollowing) {
+        res.status(409).json({ message: "Already following this user" });
+        return;
+      }
+
+      const newFollow = new Follower({
+        user: userId,
+        following: followUserId,
+      });
+
+      await newFollow.save();
+      res.status(201).json({ message: "Successfully following user" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error following user", error: error.message });
+    }
+  }
+
+  async unfollowUser(req: AuthRequest, res: Response): Promise<void> {
+    const userId = req.user._id; // The authenticated user's ID
+    const { userId: followUserId } = req.params; // The user to unfollow
+
+    try {
+      const follow = await Follower.findOneAndDelete({
+        user: userId,
+        following: followUserId,
+      });
+
+      if (!follow) {
+        res.status(404).json({ message: "Not following this user" });
+        return;
+      }
+
+      res.status(200).json({ message: "Successfully unfollowed user" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error unfollowing user", error: error.message });
+    }
+  }
+
+  async getFollowers(req: AuthRequest, res: Response): Promise<void> {
+    const { userId } = req.params;
+
+    try {
+      const followers = await Follower.find({ following: userId }).populate(
+        "user",
+        "username profilePicture"
+      );
+      res.status(200).json(followers.map((follower) => follower.user));
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error retrieving followers", error: error.message });
+    }
+  }
+
+  async getFollowing(req: AuthRequest, res: Response): Promise<void> {
+    const { userId } = req.params;
+
+    try {
+      const following = await Follower.find({ user: userId }).populate(
+        "following",
+        "username profilePicture"
+      );
+      res.status(200).json(following.map((follower) => follower.following));
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error retrieving following", error: error.message });
     }
   }
 }

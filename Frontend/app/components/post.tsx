@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,52 +9,26 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { colors } from "../styles/themeStyles";
-import { userApi } from "../api/userApi";
 import { postApi } from "../api/postApi";
 
 type PostProps = {
   post: {
     _id: string;
-    owner: string; // ID of the owner
+    owner: string;
     content: string;
     photo?: string;
     likes: string[];
     isLikedByCurrentUser: boolean;
   };
+  user: {
+    username: string;
+    profilePicture?: string;
+  };
+  navigation: any;
 };
 
-const getUserDetails = async (ownerId: string) => {
-  try {
-    const response = await userApi.getUserById(ownerId);
-    const user = response.data;
-    return {
-      username: user.username,
-      profilePicture: user.profilePicture,
-    };
-  } catch (error) {
-    console.error("Error fetching user details:", error);
-    return {
-      username: "Unknown User",
-      profilePicture: null,
-    };
-  }
-};
-
-const Post: React.FC<PostProps> = ({ post }) => {
+const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
   const [isLiked, setIsLiked] = useState(post.isLikedByCurrentUser);
-  const [user, setUser] = useState({ username: "", profilePicture: null });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const userDetails = await getUserDetails(post.owner);
-      setUser({
-        username: userDetails.username,
-        profilePicture: userDetails.profilePicture,
-      });
-    };
-
-    fetchData();
-  }, [post.owner]);
 
   const handleLike = async () => {
     try {
@@ -75,17 +49,13 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
   return (
     <View style={styles.postContainer}>
-      <View style={styles.userInfo}>
+      <TouchableOpacity style={styles.userInfo} onPress={() => navigation.navigate('UserProfile', { userId: post.owner })}>
         <Image
-          source={
-            user.profilePicture
-              ? { uri: user.profilePicture }
-              : require("../../assets/defaultprofile.jpg")
-          }
+          source={user.profilePicture ? { uri: user.profilePicture } : require("../../assets/defaultprofile.jpg")}
           style={styles.profilePic}
         />
         <Text style={styles.username}>{user.username}</Text>
-      </View>
+      </TouchableOpacity>
       <Text style={styles.content}>{post.content}</Text>
       {post.photo && (
         <Image source={{ uri: post.photo }} style={styles.image} />
@@ -110,7 +80,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
-    paddingTop: 0,
   },
   profilePic: {
     width: 40,
@@ -141,7 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   likeButton: {},
-  commentButton: {},
 });
 
 export default Post;
