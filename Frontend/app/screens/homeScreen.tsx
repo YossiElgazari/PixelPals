@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, StyleSheet, Animated, FlatList, Image, Text, RefreshControl, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  FlatList,
+  Image,
+  Text,
+  RefreshControl,
+  Alert,
+} from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 import Post from "../components/post";
 import { postApi } from "../api/postApi";
 import { userApi } from "../api/userApi";
 import LoadingSpinner from "../components/loading";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import { colors } from "../styles/themeStyles";
 
 interface PostType {
@@ -50,9 +59,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     try {
       const response = await postApi.fetchPosts();
       const userResponses = await Promise.all(
-        response.data.map((post: PostType) =>
-          userApi.getUserById(post.owner)
-        )
+        response.data.map((post: PostType) => userApi.getUserById(post.owner))
       );
       const userMap: UserMap = {};
       userResponses.forEach((userRes, index) => {
@@ -60,14 +67,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         userMap[response.data[index].owner] = {
           _id: userData._id,
           username: userData.username,
-          profilePicture: userData.profilePicture
+          profilePicture: userData.profilePicture,
         };
       });
       setPosts(response.data);
       setUsers(userMap);
     } catch (error) {
-      console.error("Failed to fetch posts or user data:", error);
-      Alert.alert("Error", "Failed to load data. Please try again.");
+      console.log("Failed to fetch posts or user data:", error);
     }
     setLoading(false);
   }, []);
@@ -92,9 +98,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           data={posts}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <Post post={item} user={users[item.owner]} navigation={navigation} />
+            <Post
+              post={item}
+              user={users[item.owner]}
+              navigation={navigation}
+            />
           )}
-          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
           contentContainerStyle={styles.contentContainer}
           scrollEventThrottle={16}
           onRefresh={onRefresh}
@@ -102,11 +115,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         />
       ) : (
         <View style={styles.noPostsContainer}>
-          <Text style={styles.noPostsText}>No posts yet, upload something!</Text>
+          <Text style={styles.noPostsText}>
+            No posts yet, upload something!
+          </Text>
         </View>
       )}
-      <Animated.View style={[styles.header, { transform: [{ translateY: headerTranslateY }] }]}>
-        <Image source={require("../../assets/PixelPalstextclear.png")} style={styles.headerImg} />
+      <Animated.View
+        style={[
+          styles.header,
+          { transform: [{ translateY: headerTranslateY }] },
+        ]}
+      >
+        <Image
+          source={require("../../assets/PixelPalstextclear.png")}
+          style={styles.headerImg}
+        />
       </Animated.View>
     </View>
   );
@@ -140,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: 0.5,
-    borderBottomColor: colors.grey
+    borderBottomColor: colors.grey,
   },
   headerImg: {
     width: 150,

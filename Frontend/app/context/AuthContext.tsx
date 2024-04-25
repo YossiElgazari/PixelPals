@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import * as SecureStorage from "../utility/secureStorage";
 import { authApi } from "../api/authApi";
-import  clientApi from "../api/clientApi";
+import clientApi from "../api/clientApi";
 
 export const setAuthToken = (accessToken: string) => {
   console.log("Setting auth token:", accessToken);
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: any) => {
           });
         }
       } catch (error: any) {
-        console.error("Failed to fetch auth state:", error);
+        console.log("Failed to fetch auth state:", error);
       }
     };
     fetchAuthState();
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: any) => {
       console.log("Register response:", response);
       return response;
     } catch (error: any) {
-      console.error(
+      console.log(
         "Registration failed:",
         error.response ? error.response.data : error
       );
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: any) => {
       }
       return response;
     } catch (error: any) {
-      console.error(
+      console.log(
         "Login failed:",
         error.response ? error.response.data : error
       );
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }: any) => {
       });
       return response;
     } catch (error: any) {
-      console.error(
+      console.log(
         "Logout failed:",
         error.response ? error.response.data : error
       );

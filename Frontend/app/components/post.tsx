@@ -40,18 +40,27 @@ const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
         await postApi.likePost(post._id);
       }
     } catch (error) {
-      console.error("Error liking the post:", error);
+      console.log("Error liking the post:", error);
       // Revert the like state in case of failure
       setIsLiked(!isLiked);
-      Alert.alert("Error", "Failed to update like. Please try again.");
+      console.log("Error", "Failed to update like. Please try again.");
     }
   };
 
   return (
     <View style={styles.postContainer}>
-      <TouchableOpacity style={styles.userInfo} onPress={() => navigation.navigate('UserProfile', { userId: post.owner })}>
+      <TouchableOpacity
+        style={styles.userInfo}
+        onPress={() =>
+          navigation.navigate("UserProfile", { userId: post.owner })
+        }
+      >
         <Image
-          source={user.profilePicture ? { uri: user.profilePicture } : require("../../assets/defaultprofile.jpg")}
+          source={
+            user.profilePicture
+              ? { uri: user.profilePicture }
+              : require("../../assets/defaultprofile.jpg")
+          }
           style={styles.profilePic}
         />
         <Text style={styles.username}>{user.username}</Text>

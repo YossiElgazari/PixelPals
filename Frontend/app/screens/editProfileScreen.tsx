@@ -25,7 +25,7 @@ const EditProfileScreen = () => {
         setBio(bio);
         setProfilePicture(profilePicture);
       } catch (error) {
-        Alert.alert("Error", "Unable to fetch profile details.");
+        console.log("Error", "Unable to fetch profile details.");
       }
     };
 
@@ -38,7 +38,7 @@ const EditProfileScreen = () => {
       Alert.alert("Success", "Profile updated successfully.");
       navigation.goBack();
     } catch (error) {
-      Alert.alert("Error", "Failed to update profile.");
+      console.log("Error", "Failed to update profile.");
     }
   };
 

@@ -1,7 +1,7 @@
 
 
 
-GET http://localhost:3000/get/search/y
+GET http://localhost:3000/user/search/y
 Content-Type: application/json
 
 {

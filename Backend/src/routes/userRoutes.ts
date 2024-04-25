@@ -10,6 +10,13 @@ router.get(
   UserController.getuserprofile.bind(UserController)
 );
 
+// Get user profile by id
+router.get(
+  "/profile/:userId",
+  protect,
+  UserController.getuserprofilebyid.bind(UserController)
+);
+
 // Update user profile
 router.put(
   "/profile",

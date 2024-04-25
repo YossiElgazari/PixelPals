@@ -1,5 +1,13 @@
-import React, { useCallback , useState } from "react";
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useFocusEffect } from "@react-navigation/native";
@@ -10,8 +18,9 @@ import { useActionSheet } from "@expo/react-native-action-sheet";
 import MyButton from "../components/myButton";
 import { colors } from "../styles/themeStyles";
 import * as ImagePicker from "expo-image-picker";
-import { RootStackParamList } from "../../App"
-import * as Clipboard from 'expo-clipboard';
+import { RootStackParamList } from "../../App";
+import * as Clipboard from "expo-clipboard";
+import { UserModel } from "../models/userModel";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
@@ -20,10 +29,12 @@ type Props = {
 const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const { onLogout } = useAuth();
   const { showActionSheetWithOptions } = useActionSheet();
-  const [userInfo, setUserInfo] = useState({
+  const [userInfo, setUserInfo] = useState<UserModel>({
+    _id: "",
     username: "",
+    email: "",
     bio: "",
-    profileImageUrl: "", // Initialize as empty string to be replaced by fetched URL
+    profilePicture: "",
     postsCount: 0,
     followersCount: 0,
     followingCount: 0,
@@ -38,17 +49,18 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           const response = await userApi.getUserProfile();
           if (isActive) {
             setUserInfo({
+              _id: response.data.user._id,
               username: response.data.user.username,
-              profileImageUrl: response.data.user.profilePicture || userInfo.profileImageUrl,
+              email: response.data.user.email,
               bio: response.data.user.bio,
+              profilePicture: response.data.user.profilePicture,
               postsCount: response.data.postsCount,
               followersCount: response.data.followersCount,
               followingCount: response.data.followingCount,
             });
           }
         } catch (error) {
-          console.error("Failed to fetch user info:", error);
-          Alert.alert("Error", "Failed to load user information.");
+          console.log("Failed to fetch user info:", error);
         }
       };
 
@@ -76,7 +88,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         destructiveButtonIndex,
         destructiveColor: colors.primary,
         containerStyle: styles.dotsMenu,
-        textStyle: styles.dotsText
+        textStyle: styles.dotsText,
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
@@ -84,7 +96,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         } else if (buttonIndex === 1) {
           confirmAction("Delete User");
         } else if (buttonIndex === 2) {
-          navigation.navigate('ResetPassword');
+          navigation.navigate("ResetPassword");
         }
       }
     );
@@ -115,7 +127,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           }
         }
       }
-    )
+    );
   };
 
   const ActionSheetProfile = () => {
@@ -127,7 +139,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         options,
         cancelButtonIndex,
         containerStyle: styles.dotsMenu,
-        textStyle: styles.dotsText
+        textStyle: styles.dotsText,
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
@@ -142,7 +154,10 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const chooseFromGallery = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permission Denied", "Permission to access camera roll is required!");
+      Alert.alert(
+        "Permission Denied",
+        "Permission to access camera roll is required!"
+      );
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -150,19 +165,24 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       aspect: [4, 3],
     });
     if (!result.canceled && result.assets[0].uri) {
-      setUserInfo({ ...userInfo, profileImageUrl: result.assets[0].uri });
+      setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
       try {
-        await userApi.updateProfilePicture({ profilePicture: result.assets[0].uri });
+        await userApi.updateProfilePicture({
+          profilePicture: result.assets[0].uri,
+        });
       } catch (error) {
-        console.error("Failed to update profile image:", error);
+        console.log("Failed to update profile image:", error);
       }
     }
-  }
+  };
 
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permission Denied", "Permission to access camera is required!");
+      Alert.alert(
+        "Permission Denied",
+        "Permission to access camera is required!"
+      );
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -170,11 +190,13 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       aspect: [4, 3],
     });
     if (!result.canceled && result.assets[0].uri) {
-      setUserInfo({ ...userInfo, profileImageUrl: result.assets[0].uri });
+      setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
       try {
-        await userApi.updateProfilePicture({ profilePicture: result.assets[0].uri });
+        await userApi.updateProfilePicture({
+          profilePicture: result.assets[0].uri,
+        });
       } catch (error) {
-        console.error("Failed to update profile image:", error);
+        console.log("Failed to update profile image:", error);
       }
     }
   };
@@ -182,8 +204,11 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const copyProfileURL = () => {
     const profileURL = "https://pixelpals.com/profile/" + userInfo.username;
     Clipboard.setStringAsync(profileURL);
-    Alert.alert("Profile URL Copied", "Your profile URL has been copied to the clipboard!");
-  }
+    Alert.alert(
+      "Profile URL Copied",
+      "Your profile URL has been copied to the clipboard!"
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -192,17 +217,24 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.actionIconContainer}>
             <TouchableOpacity
               onPress={openActionSheet}
-              style={{ backgroundColor: colors.background80, padding: 5, borderRadius: 10 }}
+              style={{
+                backgroundColor: colors.background80,
+                padding: 5,
+                borderRadius: 10,
+              }}
             >
               <Icon name="ellipsis-v" size={26} color="white" />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.imageButton} onPress={ActionSheetProfile}>
+          <TouchableOpacity
+            style={styles.imageButton}
+            onPress={ActionSheetProfile}
+          >
             <Image
               source={
-                userInfo.profileImageUrl
-                  ? { uri: userInfo.profileImageUrl }
-                  : require('../../assets/defaultprofile.jpg') // Use the default image if no profileImageUrl is present
+                userInfo.profilePicture
+                  ? { uri: userInfo.profilePicture }
+                  : require("../../assets/defaultprofile.jpg") // Use the default image if no profilePicture is present
               }
               style={styles.profileImage}
             />
@@ -212,14 +244,32 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.statNumber}>{userInfo.postsCount}</Text>
               <Text style={styles.statLabel}>Posts</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userInfo.followersCount}</Text>
-              <Text style={styles.statLabel}>Followers</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userInfo.followingCount}</Text>
-              <Text style={styles.statLabel}>Following</Text>
-            </View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("followersList", {
+                  userId: userInfo._id,
+                  username: userInfo.username,
+                })
+              }
+            >
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{userInfo.followersCount}</Text>
+                <Text style={styles.statLabel}>Followers</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("followingList", {
+                  userId: userInfo._id,
+                  username: userInfo.username,
+                })
+              }
+            >
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{userInfo.followingCount}</Text>
+                <Text style={styles.statLabel}>Following</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.userTable}>
@@ -227,15 +277,24 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           {userInfo.bio ? <Text style={styles.bio}>{userInfo.bio}</Text> : null}
         </View>
         <View style={styles.buttonsTable}>
-          <MyButton text="Edit Profile" onPress={handleEditProfile} buttonStyle={styles.editButton} textStyle={styles.textEditButton} />
-          <MyButton text="Share Profile" onPress={copyProfileURL} buttonStyle={styles.editButton} textStyle={styles.textEditButton} />
+          <MyButton
+            text="Edit Profile"
+            onPress={handleEditProfile}
+            buttonStyle={styles.editButton}
+            textStyle={styles.textEditButton}
+          />
+          <MyButton
+            text="Share Profile"
+            onPress={copyProfileURL}
+            buttonStyle={styles.editButton}
+            textStyle={styles.textEditButton}
+          />
         </View>
         {/* Grid of posts or other content */}
       </ScrollView>
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

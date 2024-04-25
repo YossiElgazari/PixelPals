@@ -11,6 +11,8 @@ import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import ResetPasswordScreen from "./app/screens/resetPasswordScreen";
 import EditProfileScreen from "./app/screens/editProfileScreen";
 import UserProfileScreen from "./app/screens/userProfileScreen";
+import followersList from "./app/components/followersList";
+import followingList from "./app/components/followingList";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -23,6 +25,8 @@ export type RootStackParamList = {
   ResetPassword: undefined;
   EditProfile: undefined;
   UserProfile: { userId: string };
+  followersList: { userId: string, username: string};
+  followingList: { userId: string, username: string};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -49,6 +53,8 @@ export const Layout = () => {
             <Stack.Screen name="UserProfile" component={UserProfileScreen} />
             <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+            <Stack.Screen name="followersList" component={followersList} />
+            <Stack.Screen name="followingList" component={followingList} />
           </>
         ) : (
           <>

@@ -29,7 +29,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     const result = await onLogin!(username, password);
     navigation.navigate("Home");
     if (result && result.error) {
-      alert(result.msg);
+      console.log(result.msg);
     }
   };
 
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.google,
   },
-  buttonLogin:{
+  buttonLogin: {
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderColor: colors.primary,

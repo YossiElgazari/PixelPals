@@ -5,15 +5,20 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { userApi } from "../api/userApi";
 import { colors } from "../styles/themeStyles";
 import { RootStackParamList } from "../../App";
+import LoadingSpinner from "../components/loading";
+import MyButton from "../components/myButton";
+
 
 type UserProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'UserProfile'>;
 
 const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route }) => {
+  const [loading, setLoading] = useState(true);
   const { userId } = route.params;
   const [userInfo, setUserInfo] = useState({
+    _id: "",
     username: "",
     bio: "",
-    profileImageUrl: "",
+    profilePicture: "",
     postsCount: 0,
     followersCount: 0,
     followingCount: 0,
@@ -22,19 +27,21 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await userApi.getUserById(userId);
+        setLoading(true);
+        const response = await userApi.getUserProfileById(userId);
         setUserInfo({
-          username: response.data.username,
-          profileImageUrl: response.data.profileImageUrl || '../../assets/defaultprofile.jpg',
-          bio: response.data.bio,
+          _id: response.data.user._id,
+          username: response.data.user.username,
+          profilePicture: response.data.user.profilePicture,
+          bio: response.data.user.bio,
           postsCount: response.data.postsCount,
           followersCount: response.data.followersCount,
           followingCount: response.data.followingCount,
         });
       } catch (error) {
-        console.error("Failed to fetch user info:", error);
-        Alert.alert("Error", "Failed to load user information.");
+        console.log("Failed to fetch user info:", error);
       }
+      setLoading(false);
     };
 
     fetchUserInfo();
@@ -46,42 +53,83 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
         message: `Check out ${userInfo.username}'s profile on PixelPals: https://pixelpals.com/profile/${userInfo.username}`,
       });
     } catch (error) {
-      Alert.alert("Error", "Unable to share profile.");
+      console.log("Error", "Unable to share profile.");
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={24} color={colors.white} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{userInfo.username}'s Profile</Text>
-      </View>
       <ScrollView>
-        <Image
-          source={{ uri: userInfo.profileImageUrl || '../../assets/defaultprofile.jpg' }}
-          style={styles.profileImage}
-        />
-        <Text style={styles.username}>{userInfo.username}</Text>
-        <Text style={styles.bio}>{userInfo.bio}</Text>
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{userInfo.postsCount}</Text>
-            <Text style={styles.statLabel}>Posts</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{userInfo.followersCount}</Text>
-            <Text style={styles.statLabel}>Followers</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{userInfo.followingCount}</Text>
-            <Text style={styles.statLabel}>Following</Text>
+      {loading && <LoadingSpinner />}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+        >
+          <Icon name="arrow-left" size={22} color="white" />
+        </TouchableOpacity>
+          <Text style={styles.headerTitle}>{userInfo.username}'s profile</Text>
+      </View>
+        <View style={styles.profileHeader}>
+            <Image
+              source={
+                userInfo.profilePicture
+                  ? { uri: userInfo.profilePicture }
+                  : require("../../assets/defaultprofile.jpg") 
+              }
+              style={styles.profileImage}
+            />
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{userInfo.postsCount}</Text>
+              <Text style={styles.statLabel}>Posts</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("followersList", {
+                  userId: userInfo._id,
+                  username: userInfo.username,
+                })
+              }
+            >
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{userInfo.followersCount}</Text>
+                <Text style={styles.statLabel}>Followers</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("followingList", {
+                  userId: userInfo._id,
+                  username: userInfo.username,
+                })
+              }
+            >
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{userInfo.followingCount}</Text>
+                <Text style={styles.statLabel}>Following</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity style={styles.shareButton} onPress={shareProfile}>
-          <Text style={styles.shareButtonText}>Share Profile</Text>
-        </TouchableOpacity>
+        <View style={styles.userTable}>
+          <Text style={styles.username}>{userInfo.username}</Text>
+          {userInfo.bio ? <Text style={styles.bio}>{userInfo.bio}</Text> : null}
+        </View>
+        <View style={styles.buttonsTable}>
+          <MyButton
+            text="Follow"
+            onPress={() => {}}
+            buttonStyle={styles.editButton}
+            textStyle={styles.textEditButton} 
+          />
+          <MyButton
+            text="Share Profile"
+            onPress={shareProfile}
+            buttonStyle={styles.editButton}
+            textStyle={styles.textEditButton}
+          />
+        </View>
+        {/* Grid of posts or other content */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -92,42 +140,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
+  profileHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
+    padding: 20,
+    paddingTop: 5,
+    paddingBottom: 7,
+    backgroundColor: colors.background80,
+  },
+  header: {
+    flexDirection: "row",
+    padding: 10,
     backgroundColor: colors.background80,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.white,
-    marginLeft: 20,
+    color: "white",
+    fontSize: 18,
+    textAlign: "center",
+    flex: 1,
+    width: "100%",
+  },
+  actionIconContainer: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: 85,
+    height: 85,
     borderRadius: 50,
-    alignSelf: "center",
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  username: {
-    fontWeight: "bold",
-    fontSize: 18,
-    color: colors.white,
-    textAlign: "center",
-  },
-  bio: {
-    fontSize: 16,
-    color: colors.white,
-    textAlign: "center",
-    padding: 10,
+    borderWidth: 2,
+    borderColor: "white",
+    marginRight: 10,
   },
   statsContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 20,
+    gap: 15,
+    alignItems: "center",
   },
   statItem: {
     alignItems: "center",
@@ -140,19 +189,89 @@ const styles = StyleSheet.create({
   statLabel: {
     color: "grey",
     fontSize: 14,
+    minWidth: 70,
+    textAlign: "center",
   },
-  shareButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 5,
+  userTable: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    paddingLeft: 15,
+    paddingBottom: 10,
+    borderBottomColor: "grey",
+    backgroundColor: colors.background80,
+  },
+  username: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  bio: {
+    color: "white",
+    fontSize: 14,
+  },
+  buttonsTable: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingBottom: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "grey",
+    backgroundColor: colors.background80,
     padding: 10,
-    marginHorizontal: 50,
-    alignItems: "center",
-    marginBottom: 20,
+    paddingTop: 0,
   },
-  shareButtonText: {
+  dotsMenu: {
+    backgroundColor: colors.background80,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopColor: colors.primary,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 5,
+  },
+  dotsSecondMenu: {
+    backgroundColor: colors.background80,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderWidth: 1,
+    borderTopColor: colors.primary,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: 5,
+  },
+  dotsText: {
+    color: "white",
+    fontSize: 18,
+    padding: 5,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    textAlign: "center",
+  },
+  dotsTitleText: {
     color: "white",
     fontSize: 16,
+    alignSelf: "center",
+  },
+  imageButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  editButton: {
+    width: "45%",
+    alignSelf: "center",
+    paddingHorizontal: 10,
+  },
+  textEditButton: {
+    color: "white",
+    fontSize: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

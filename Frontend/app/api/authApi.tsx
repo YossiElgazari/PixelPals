@@ -14,7 +14,7 @@ export const authApi = {
       console.log("Registration successful:", response.data);
       return response;
     } catch (error: any) {
-      console.error(
+      console.log(
         "Registration failed:",
         error.response ? error.response.data : error
       );
@@ -36,7 +36,7 @@ export const authApi = {
       }
       return response;
     } catch (error: any) {
-      console.error(
+      console.log(
         "Login failed:",
         error.response ? error.response.data : error
       );
@@ -51,7 +51,7 @@ export const authApi = {
       delete clientApi.defaults.headers.common["Authorization"];
       return response;
     } catch (error: any) {
-      console.error(
+      console.log(
         "Logout failed:",
         error.response ? error.response.data : error
       );

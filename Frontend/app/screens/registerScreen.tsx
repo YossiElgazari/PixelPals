@@ -34,21 +34,27 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const handleRegister = async () => {
     try {
       const userData = { username, email, password };
-      const result = await onRegister!(userData.username, userData.password, userData.email);
+      const result = await onRegister!(
+        userData.username,
+        userData.password,
+        userData.email
+      );
       if (result && result.error) {
-        alert(result.msg);
+        console.log(result.msg);
       } else {
-        const loginResult = await onLogin!(userData.username, userData.password);
+        const loginResult = await onLogin!(
+          userData.username,
+          userData.password
+        );
         navigation.navigate("Home");
         if (loginResult && loginResult.error) {
-          alert(loginResult.msg);
+          console.log(loginResult.msg);
         }
       }
     } catch (error) {
-      console.error("Failed to register:", error);
-      alert("Failed to register. Please try again.");
+      console.log("Failed to register:", error);
     }
-  }
+  };
 
   const pickImage = async () => {
     const permissionResult =
@@ -122,8 +128,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           <MyButton
             text="Register"
             onPress={handleRegister}
-            textStyle={{color: colors.primary, fontWeight: "bold"}}
-            buttonStyle={{borderColor: colors.white}}
+            textStyle={{ color: colors.primary, fontWeight: "bold" }}
+            buttonStyle={{ borderColor: colors.white }}
           />
         </View>
       </View>

@@ -50,6 +50,37 @@ class UserController extends BaseController<IUser> {
     }
   }
 
+  async getuserprofilebyid(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.params.userId;
+      console.log("userId", userId);
+      const user = await User.findById(userId);
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+      const postsCount = await Post.countDocuments({ user: userId });
+      const followersCount = await Follower.countDocuments({ following: userId });
+      const followingCount = await Follower.countDocuments({ user: userId });
+      res.status(200).json({
+        user,
+        postsCount,
+        followersCount,
+        followingCount
+      });
+    }
+    catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log("getuserprofilebyid error", error);
+        res
+          .status(500)
+          .json({ message: "Error message", error: error.message });
+      } else {
+        res.status(500).json({ message: "An unknown error occurred" });
+      }
+    }
+  }
+
   async updateuserprofile(req: AuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.user._id;
@@ -183,20 +214,28 @@ class UserController extends BaseController<IUser> {
     try {
       const query = req.params.query;
       const users = await User.find({
-        username: { $regex: query, $options: "i" },
-      }).select("username profilePicture");
+        username: { $regex: `^${query}`, $options: "i" }, 
+      })
+      .select("_id username profilePicture")
+      .limit(10)
+      .sort({ username: 1 });
+  
+      if (users.length === 0) {
+        res.status(404).json({ message: "No users found" });
+        return;
+      }
+  
       res.status(200).json(users);
     } catch (error: unknown) {
-      console.log("searchusers error", error);
+      console.error("searchUsers error", error);
       if (error instanceof Error) {
-        res
-          .status(500)
-          .json({ message: "Error message", error: error.message });
+        res.status(500).json({ message: "An error occurred", error: error.message });
       } else {
         res.status(500).json({ message: "An unknown error occurred" });
       }
     }
   }
+  
 
   async followUser(req: AuthRequest, res: Response): Promise<void> {
     const userId = req.user._id; // The authenticated user's ID
@@ -263,7 +302,9 @@ class UserController extends BaseController<IUser> {
         "user",
         "username profilePicture"
       );
-      res.status(200).json(followers.map((follower) => follower.user));
+      const followersofuser = followers.map((follower) => follower.user);
+      console.log("\x1b[36mfollowersofuser:\n", followersofuser, "\x1b[0m");
+      res.status(200).json(followersofuser);
     } catch (error) {
       res
         .status(500)
