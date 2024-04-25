@@ -9,6 +9,7 @@ type MyButtonProps = {
   buttonStyle?: ViewStyle;
   textStyle?: TextStyle;
   icon?: string;
+  visible?: boolean;
 };
 
 const MyButton: React.FC<MyButtonProps> = ({
@@ -17,11 +18,13 @@ const MyButton: React.FC<MyButtonProps> = ({
   buttonStyle,
   textStyle,
   icon,
+  visible,
 }) => {
   const finalButtonStyle = buttonStyle || styles.button;
   const finalTextStyle = textStyle || styles.text;
 
   return (
+    visible === false ? null :
       <TouchableOpacity onPress={onPress} style={[styles.button, finalButtonStyle]}>
         {icon && <Icon name={"icon"} size={20} color="#fff" style={styles.icon} />}
         <Text style={finalTextStyle}>{text}</Text>

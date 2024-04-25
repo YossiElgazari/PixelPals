@@ -13,8 +13,9 @@ type UserProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'UserPr
 
 const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
+  const [isCurrentUserProfile, setIsCurrentUserProfile] = useState(false);
   const { userId } = route.params;
-  const [userInfo, setUserInfo] = useState({
+  const [userInfo, setUserInfo] = useState({  
     _id: "",
     username: "",
     bio: "",
@@ -25,6 +26,17 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
   });
 
   useEffect(() => {
+    const checkIfCurrentUserProfile = async () => {
+      setLoading(true);
+      try {
+        const response = await userApi.getUserProfile();
+        setIsCurrentUserProfile(response.data.user._id === userId);
+      } catch (error) {
+        console.log("Failed to check if current user profile:", error);
+      }
+      setLoading(false);
+    }
+
     const fetchUserInfo = async () => {
       try {
         setLoading(true);
@@ -45,6 +57,7 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
     };
 
     fetchUserInfo();
+    checkIfCurrentUserProfile();
   }, [userId]);
 
   const shareProfile = async () => {
@@ -121,6 +134,7 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
             onPress={() => {}}
             buttonStyle={styles.editButton}
             textStyle={styles.textEditButton} 
+            visible={!isCurrentUserProfile}
           />
           <MyButton
             text="Share Profile"
