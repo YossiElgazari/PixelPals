@@ -19,6 +19,7 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<PostType[]>([]);
   const [isCurrentUserProfile, setIsCurrentUserProfile] = useState(false);
+  const [isBeingFollowed, setIsBeingFollowed] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const { userId } = route.params;
   const [userInfo, setUserInfo] = useState({
@@ -42,8 +43,21 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
       setLoading(false);
     }
 
+    const checkIfBeingFollowed = async () => {
+      setLoading(true);
+      try {
+        const response = await userApi.getFollowers(userId);
+        const isBeingFollowed = response.data.some((follower: any) => follower._id === authState?.userId);
+        setIsBeingFollowed(isBeingFollowed);
+      } catch (error) {
+        console.log("Failed to check if being followed:", error);
+      }
+      setLoading(false);
+    }
+
     fetchUserInfo();
     checkIfCurrentUserProfile();
+    checkIfBeingFollowed();
   }, [userId]);
 
   const fetchUserInfo = useCallback(async () => {
@@ -80,6 +94,32 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
       });
     } catch (error) {
       console.log("Error", "Unable to share profile.");
+    }
+  };
+
+  const handleFollow = async () => {
+    try {
+      await userApi.followUser(userId);
+      setUserInfo({
+        ...userInfo,
+        followersCount: userInfo.followersCount + 1,
+      });
+      setIsBeingFollowed(true);
+    } catch (error) {
+      console.log("Failed to follow user:", error);
+    }
+  };
+  
+  const handleUnfollow = async () => {
+    try {
+      await userApi.unfollowUser(userId);
+      setUserInfo({
+        ...userInfo,
+        followersCount: userInfo.followersCount - 1,
+      });
+      setIsBeingFollowed(false);
+    } catch (error) {
+      console.log("Failed to unfollow user:", error);
     }
   };
 
@@ -142,13 +182,14 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
         {userInfo.bio ? <Text style={styles.bio}>{userInfo.bio}</Text> : null}
       </View>
       <View style={styles.buttonsTable}>
-        <MyButton
-          text="Follow"
-          onPress={() => { }}
-          buttonStyle={styles.editButton}
-          textStyle={styles.textEditButton}
-          visible={!isCurrentUserProfile}
-        />
+        {!isCurrentUserProfile ? (
+          <MyButton
+            text={isBeingFollowed ? "Unfollow" : "Follow"}
+            onPress={isBeingFollowed ? handleUnfollow : handleFollow}
+            buttonStyle={styles.editButton}
+            textStyle={styles.textEditButton}
+          />
+        ) : null} 
         <MyButton
           text="Share Profile"
           onPress={shareProfile}

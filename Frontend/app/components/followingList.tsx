@@ -125,14 +125,10 @@ const FollowingList = ({ route,navigation }: { route: any, navigation:any }) => 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backArrow}>
           <Icon name="arrow-left" size={22} color="white" />
         </TouchableOpacity>
-        <View style={styles.titleContainer}>
-          <Text style={styles.headerTitle}>{username}'s following</Text>
-        </View>
+        <Text style={styles.headerTitle}>{username}'s following</Text>
       </View>
       <FlatList
         data={following}
@@ -141,7 +137,7 @@ const FollowingList = ({ route,navigation }: { route: any, navigation:any }) => 
       />
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -150,15 +146,16 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center", // Center items horizontally
     padding: 10,
     backgroundColor: colors.background80,
   },
   headerTitle: {
     color: "white",
     fontSize: 18,
+    fontWeight: "bold",
     textAlign: "center",
-    flex: 1,
-    width: "100%",
   },
   itemContainer: {
     flexDirection: "row",
@@ -180,11 +177,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
   },
-  titleContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -197,6 +189,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
   },
+  backArrow: {
+    position: "absolute",
+    left: 10,
+  },
 });
+
 
 export default FollowingList;

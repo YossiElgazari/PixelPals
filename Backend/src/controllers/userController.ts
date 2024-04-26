@@ -45,7 +45,7 @@ class UserController extends BaseController<IUser> {
         return;
       }
       const userPosts = await Post.find({ owner: userId }).sort({ createdAt: -1 });
-      const postsCount = await Post.countDocuments({ user: userId });
+      const postsCount = await Post.countDocuments({ owner: userId });
       const followersCount = await Follower.countDocuments({ following: userId });
       const followingCount = await Follower.countDocuments({ user: userId });
       res.status(200).json({

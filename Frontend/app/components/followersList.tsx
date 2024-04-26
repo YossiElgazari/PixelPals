@@ -9,8 +9,6 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { userApi } from "../api/userApi";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { colors } from "../styles/themeStyles";
@@ -22,10 +20,6 @@ interface Follower {
   isFollowing: boolean;
 }
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, "followersList">;
-};
-
 const FollowerList = ({
   route,
   navigation,
@@ -36,12 +30,11 @@ const FollowerList = ({
   const [followers, setFollowers] = useState<Follower[]>([]);
   const userId = route.params.userId;
   const username = route.params.username;
+
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
         const response = await userApi.getFollowers(userId);
-        // check if user is following each follower
-
         setFollowers(response.data);
       } catch (error) {
         console.log("Failed to fetch followers:", error);
@@ -66,21 +59,18 @@ const FollowerList = ({
 
       // Clean up function
       return () => {};
-    }, [userId]) // Add userId as a dependency
+    }, [userId])
   );
 
   const handleFollow = async (followerId: string) => {
     try {
-      console.log(followerId);
       await userApi.followUser(followerId);
-      // Update the local state to reflect the change
-      setFollowers(
-        followers.map((follower) => {
-          if (follower._id === followerId) {
-            return { ...follower, isFollowing: true };
-          }
-          return follower;
-        })
+      setFollowers((prevFollowers) =>
+        prevFollowers.map((follower) =>
+          follower._id === followerId
+            ? { ...follower, isFollowing: true }
+            : follower
+        )
       );
     } catch (error) {
       console.log("Failed to follow user:", error);
@@ -90,14 +80,12 @@ const FollowerList = ({
   const handleUnfollow = async (followerId: string) => {
     try {
       await userApi.unfollowUser(followerId);
-      // Update the local state to reflect the change
-      setFollowers(
-        followers.map((follower) => {
-          if (follower._id === followerId) {
-            return { ...follower, isFollowing: false };
-          }
-          return follower;
-        })
+      setFollowers((prevFollowers) =>
+        prevFollowers.map((follower) =>
+          follower._id === followerId
+            ? { ...follower, isFollowing: false }
+            : follower
+        )
       );
     } catch (error) {
       console.log("Failed to unfollow user:", error);
@@ -133,14 +121,10 @@ const FollowerList = ({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backArrow}>
           <Icon name="arrow-left" size={22} color="white" />
         </TouchableOpacity>
-        <View style={styles.titleContainer}>
-          <Text style={styles.headerTitle}>{username}'s followers</Text>
-        </View>
+        <Text style={styles.headerTitle}>{username}'s followers</Text>
       </View>
       <FlatList
         data={followers}
@@ -158,15 +142,16 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center", // Center items horizontally
     padding: 10,
     backgroundColor: colors.background80,
   },
   headerTitle: {
     color: "white",
     fontSize: 18,
+    fontWeight: "bold",
     textAlign: "center",
-    flex: 1,
-    width: "100%",
   },
   itemContainer: {
     flexDirection: "row",
@@ -188,11 +173,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
   },
-  titleContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -205,6 +185,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
   },
+  backArrow: {
+    position: "absolute",
+    left: 10,
+  },
 });
+
 
 export default FollowerList;

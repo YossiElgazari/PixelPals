@@ -5,6 +5,7 @@ import { protect } from "../middleware/authMiddleware";
 const router = express.Router();
 
 
+
 // Create a new post
 router.post("/", protect, PostController.create.bind(PostController));
 
