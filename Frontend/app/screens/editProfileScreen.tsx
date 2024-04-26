@@ -68,7 +68,7 @@ const EditProfileScreen = () => {
         <View style={styles.inputContainer}>
           <Icon name="align-left" size={22} color={colors.primary} />
           <TextInput
-            style={styles.input}
+            style={[styles.input, {height: 70}] }
             placeholder="Bio"
             onChangeText={setBio}
             value={bio}

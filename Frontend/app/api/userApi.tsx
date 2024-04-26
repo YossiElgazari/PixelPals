@@ -1,6 +1,7 @@
 import clientApi from "./clientApi";
 
 export const userApi = {
+  getUserId: () => clientApi.get("/user/getId"),
   getUserProfile: () => clientApi.get("/user/profile"),
   getUserProfileById: (userId: string) => clientApi.get(`/user/profile/${userId}`),
   updateUserProfile: (data: { username: string; email: string; bio: string; profilePicture: string}) =>

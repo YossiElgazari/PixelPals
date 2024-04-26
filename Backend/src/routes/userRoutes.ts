@@ -3,6 +3,9 @@ import UserController from "../controllers/userController";
 import { protect } from "../middleware/authMiddleware";
 const router = express.Router();
 
+// Get User ID
+router.get("/getId", protect, UserController.getUserId.bind(UserController));
+
 // Get user profile
 router.get(
   "/profile",
@@ -79,6 +82,7 @@ router.get(
   protect,
   UserController.getFollowing.bind(UserController)
 );
+
 
 
 export default router;

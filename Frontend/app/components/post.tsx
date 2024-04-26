@@ -11,6 +11,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { colors } from "../styles/themeStyles";
 import { postApi } from "../api/postApi";
 import { useActionSheet } from "@expo/react-native-action-sheet";
+import { useAuth } from "../context/AuthContext";
 
 type PostProps = {
   post: {
@@ -19,7 +20,6 @@ type PostProps = {
     content: string;
     photo?: string;
     likes: string[];
-    isLikedByCurrentUser: boolean;
   };
   user: {
     username: string;
@@ -31,26 +31,34 @@ type PostProps = {
 
 
 const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
-  const [isLiked, setIsLiked] = useState(post.isLikedByCurrentUser);
+  const { authState } = useAuth();
+  const [isLiked, setIsLiked] = useState(post.likes.includes(authState?.userId || ""));
+  const [likesCount, setLikesCount] = useState(post.likes.length);
   const { showActionSheetWithOptions } = useActionSheet();
-  const [loading, setLoading] = useState(false);
-
+  const isOwner = authState?.userId === post.owner;
+  
   const handleLike = async () => {
+    const previousLikeState = isLiked;
+    const previousLikesCount = likesCount;
+  
+    setIsLiked(!previousLikeState);
+    setLikesCount(previousLikeState ? previousLikesCount - 1 : previousLikesCount + 1);
+  
     try {
-      // Toggle the like state optimistically
-      setIsLiked(!isLiked);
-      if (isLiked) {
+      if (previousLikeState) {
         await postApi.unlikePost(post._id);
       } else {
         await postApi.likePost(post._id);
       }
     } catch (error) {
       console.log("Error liking the post:", error);
-      // Revert the like state in case of failure
-      setIsLiked(!isLiked);
-      console.log("Error", "Failed to update like. Please try again.");
+      Alert.alert("Like Error", "Failed to update like. Please check your network and try again.");
+      // Revert UI on error
+      setIsLiked(previousLikeState);
+      setLikesCount(previousLikesCount);
     }
   };
+  
 
   const openActionSheet = () => {
     const options = ["Edit Post", "Delete Post", "Cancel"];
@@ -94,7 +102,7 @@ const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
         if (buttonIndex === 0) {
           if (action === "Delete Post") {
             try {
-              await postApi.deletePost(post._id);
+              await postApi.deletePost(post._id);           
             } catch (error) {
               console.log("Error deleting the post:", error);
             }
@@ -121,9 +129,11 @@ const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
           />
           <Text style={styles.username}>{user.username}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={openActionSheet} >
-          <Icon name="ellipsis-v" size={22} color={colors.white} style={styles.dots} />
-        </TouchableOpacity>
+        {isOwner && (
+          <TouchableOpacity onPress={openActionSheet} >
+            <Icon name="ellipsis-v" size={22} color={colors.white} style={styles.dots} />
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.content}>{post.content}</Text>
       {post.photo && (
@@ -132,6 +142,9 @@ const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
       <View style={styles.likeCommentContainer}>
         <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
           <Icon name="heart" size={25} color={isLiked ? "red" : "grey"} />
+          <Text style={{ color: colors.white, marginLeft: 10 }}>
+            {likesCount}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

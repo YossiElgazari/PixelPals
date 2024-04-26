@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useAuth } from "../context/AuthContext";
 import MyButton from "../components/myButton";
+import LoadingSpinner from "../components/loading";
 
 const defaultProfilePic = require("../../assets/defaultprofile.jpg");
 
@@ -30,8 +31,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const { onRegister, onLogin } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
+    setLoading(true);
     try {
       const userData = { username, email, password };
       const result = await onRegister!(
@@ -54,6 +57,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     } catch (error) {
       console.log("Failed to register:", error);
     }
+    setLoading(false);
   };
 
   const pickImage = async () => {
@@ -146,7 +150,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   maincontainer: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background80,
   },
   container: {
     flex: 1,

@@ -45,16 +45,16 @@ const FollowingList = ({ route,navigation }: { route: any, navigation:any }) => 
 
   useFocusEffect(
     React.useCallback(() => {
-      const fetchFollowers = async () => {
+      const fetchFollowing = async () => {
         try {
-          const response = await userApi.getFollowers(userId);
+          const response = await userApi.getFollowing(userId);
           setFollowing(response.data);
         } catch (error) {
           console.log("Failed to fetch followers:", error);
         }
       };
 
-      fetchFollowers();
+      fetchFollowing();
 
       // Clean up function
       return () => {};
@@ -97,6 +97,14 @@ const FollowingList = ({ route,navigation }: { route: any, navigation:any }) => 
 
   const renderItem = ({ item }: { item: Following }) => (
     <View style={styles.itemContainer}>
+      <Image
+          source={
+            item.profilePicture
+              ? { uri: item.profilePicture }
+              : require("../../assets/defaultprofile.jpg")
+          }
+          style={styles.profileImage}
+        />
       <Text style={styles.username}>{item.username}</Text>
       <TouchableOpacity
         style={styles.button}
@@ -147,7 +155,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
     flex: 1,
-    width: "100%",
   },
   itemContainer: {
     flexDirection: "row",
@@ -158,6 +165,8 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 16,
     color: colors.white,
+    //near photo
+    width: "70%",
   },
   button: {
     padding: 5,

@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import * as SecureStorage from "../utility/secureStorage";
 import { authApi } from "../api/authApi";
+import { userApi } from "../api/userApi";
 import  clientApi from "../api/clientApi";
 
 export const setAuthToken = (accessToken: string) => {
@@ -11,12 +12,16 @@ export const setAuthToken = (accessToken: string) => {
     clientApi.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
     console.log("Auth tokens set:", { accessToken });
   } else {
-    delete axios.defaults.headers.common["Authorization"];
+    delete axios.defaults.headers["Authorization"];
   }
 };
 
 interface AuthProps {
-  authState?: { accessToken: string | null; authenticated: boolean | null };
+  authState?: {
+    userId: string;
+    accessToken: string | null;
+    authenticated: boolean | null;
+  };
   onRegister?: (
     username: string,
     password: string,
@@ -34,9 +39,11 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<{
+    userId: string;
     accessToken: string | null;
     authenticated: boolean | null;
   }>({
+    userId: "",
     accessToken: null,
     authenticated: null,
   });
@@ -46,21 +53,32 @@ export const AuthProvider = ({ children }: any) => {
       try {
         const accessToken = await SecureStorage.getAccessToken();
         if (accessToken) {
-          setAuthToken(accessToken);
+          setAuthToken(accessToken);  // Set the token in global headers
+          const response = await userApi.getUserId();
+          const userId = response.data.userId;
           setAuthState({
+            userId: userId,
             accessToken,
             authenticated: true,
           });
         } else {
           setAuthState({
+            userId: "",
             accessToken: null,
             authenticated: false,
           });
+          setAuthToken(''); 
         }
-      } catch (error: any) {
-        console.error("Failed to fetch auth state:", error);
+      } catch (error) {
+        console.log("Failed to fetch auth state:", error);
+        setAuthState({
+          userId: "",
+          accessToken: null,
+          authenticated: false,
+        });
       }
     };
+  
     fetchAuthState();
   }, []);
 
@@ -92,6 +110,7 @@ export const AuthProvider = ({ children }: any) => {
         );
         setAuthToken(response.data.accessToken);
         setAuthState({
+          userId: response.data.userId,
           accessToken: response.data.accessToken,
           authenticated: true,
         });
@@ -112,8 +131,9 @@ export const AuthProvider = ({ children }: any) => {
       console.log("Logging out with refresh token:", refreshToken);
       const response = await authApi.logout({ refreshToken });
       await SecureStorage.RemoveTokens();
-      delete axios.defaults.headers.common["Authorization"];
+      delete axios.defaults.headers["Authorization"];
       setAuthState({
+        userId: "",
         accessToken: null,
         authenticated: false,
       });

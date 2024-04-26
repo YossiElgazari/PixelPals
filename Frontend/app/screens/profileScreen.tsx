@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -21,6 +22,9 @@ import * as ImagePicker from "expo-image-picker";
 import { RootStackParamList } from "../../App";
 import * as Clipboard from "expo-clipboard";
 import { UserModel } from "../models/userModel";
+import { PostType } from "../screens/homeScreen";
+import LoadingSpinner from "../components/loading";
+import Post from "../components/post";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
@@ -28,6 +32,9 @@ type Props = {
 
 const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const { onLogout } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const { showActionSheetWithOptions } = useActionSheet();
   const [userInfo, setUserInfo] = useState<UserModel>({
     _id: "",
@@ -42,35 +49,36 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      let isActive = true;
-
-      const fetchUserInfo = async () => {
-        try {
-          const response = await userApi.getUserProfile();
-          if (isActive) {
-            setUserInfo({
-              _id: response.data.user._id,
-              username: response.data.user.username,
-              email: response.data.user.email,
-              bio: response.data.user.bio,
-              profilePicture: response.data.user.profilePicture,
-              postsCount: response.data.postsCount,
-              followersCount: response.data.followersCount,
-              followingCount: response.data.followingCount,
-            });
-          }
-        } catch (error) {
-          console.log("Failed to fetch user info:", error);
-        }
-      };
-
       fetchUserInfo();
-
-      return () => {
-        isActive = false; // Cleanup flag on unmount
-      };
     }, [])
   );
+
+  const fetchUserInfo = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await userApi.getUserProfile();
+        setUserInfo({
+          _id: response.data.user._id,
+          username: response.data.user.username,
+          email: response.data.user.email,
+          bio: response.data.user.bio,
+          profilePicture: response.data.user.profilePicture,
+          postsCount: response.data.postsCount,
+          followersCount: response.data.followersCount,
+          followingCount: response.data.followingCount,
+        });
+        setPosts(response.data.userPosts);
+    } catch (error) {
+      console.log("Failed to fetch user info:", error);
+    } finally { 
+      setLoading(false);
+    }
+  },[]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchUserInfo().then(() => setRefreshing(false));
+  }, [fetchUserInfo]);
 
   const handleEditProfile = () => {
     navigation.navigate("EditProfile");
@@ -123,7 +131,12 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           if (action === "Logout") {
             onLogout!();
           } else if (action === "Delete User") {
-            // Add your logic here to delete the user
+            try {
+              userApi.deleteUser();
+              onLogout!();
+            } catch (error) {
+              console.log("Failed to delete user:", error);
+            }
           }
         }
       }
@@ -212,7 +225,6 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
         <View style={styles.profileHeader}>
           <View style={styles.actionIconContainer}>
             <TouchableOpacity
@@ -290,8 +302,19 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             textStyle={styles.textEditButton}
           />
         </View>
-        {/* Grid of posts or other content */}
-      </ScrollView>
+        <FlatList
+          data={posts}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <Post
+              post={item}
+              user={userInfo}
+              navigation={navigation}
+            />
+          )}
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+        />
     </SafeAreaView>
   );
 };
@@ -368,6 +391,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background80,
     padding: 10,
     paddingTop: 0,
+    marginBottom: 5,
   },
   dotsMenu: {
     backgroundColor: colors.background80,

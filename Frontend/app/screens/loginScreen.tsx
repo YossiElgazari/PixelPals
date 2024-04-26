@@ -15,6 +15,7 @@ import { colors } from "../styles/themeStyles";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useAuth } from "../context/AuthContext";
 import MyButton from "../components/myButton";
+import LoadingSpinner from "../components/loading";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -23,14 +24,17 @@ type Props = {
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { onLogin } = useAuth();
 
   const handleLogin = async () => {
+    setLoading(true);
     const result = await onLogin!(username, password);
     navigation.navigate("Home");
     if (result && result.error) {
       console.log(result.msg);
     }
+    setLoading(false);
   };
 
   const handleForgotPassword = () => {
@@ -39,6 +43,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.maincontainer}>
+      {loading && <LoadingSpinner />}
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
@@ -105,7 +110,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   maincontainer: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background80,
   },
   container: {
     flex: 1,

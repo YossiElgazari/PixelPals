@@ -110,6 +110,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     await user.save();
 
     res.status(200).send({
+      userId: user._id,
       accessToken: accessToken,
       refreshToken: refreshToken,
     });

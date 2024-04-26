@@ -21,6 +21,21 @@ class UserController extends BaseController<IUser> {
     super(User);
   }
 
+  async getUserId(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      res.status(200).json({ userId: req.user._id });
+    } catch (error: unknown) {
+      console.log("getUserId error", error);
+      if (error instanceof Error) {
+        res
+          .status(500)
+          .json({ message: "Error message", error: error.message });
+      } else {
+        res.status(500).json({ message: "An unknown error occurred" });
+      }
+    }
+  }
+
   async getuserprofile(req: AuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.user._id;
@@ -29,11 +44,13 @@ class UserController extends BaseController<IUser> {
         res.status(404).json({ message: "User not found" });
         return;
       }
+      const userPosts = await Post.find({ owner: userId }).sort({ createdAt: -1 });
       const postsCount = await Post.countDocuments({ user: userId });
       const followersCount = await Follower.countDocuments({ following: userId });
       const followingCount = await Follower.countDocuments({ user: userId });
       res.status(200).json({
         user,
+        userPosts,
         postsCount,
         followersCount,
         followingCount
@@ -59,11 +76,13 @@ class UserController extends BaseController<IUser> {
         res.status(404).json({ message: "User not found" });
         return;
       }
+      const userPosts = await Post.find({ owner: userId }).sort({ createdAt: -1 });
       const postsCount = await Post.countDocuments({ user: userId });
       const followersCount = await Follower.countDocuments({ following: userId });
       const followingCount = await Follower.countDocuments({ user: userId });
       res.status(200).json({
         user,
+        userPosts,
         postsCount,
         followersCount,
         followingCount

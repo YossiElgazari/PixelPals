@@ -18,7 +18,7 @@ import LoadingSpinner from "../components/loading";
 import { useFocusEffect } from "@react-navigation/native";
 import { colors } from "../styles/themeStyles";
 
-interface PostType {
+export interface PostType {
   _id: string;
   owner: string;
   content: string;
@@ -74,9 +74,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       setUsers(userMap);
     } catch (error) {
       console.log("Failed to fetch posts or user data:", error);
-    }
+    } finally {
     setLoading(false);
-  }, []);
+    }
+  } , []);
 
   useFocusEffect(
     useCallback(() => {
