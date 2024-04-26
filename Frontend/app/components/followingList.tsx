@@ -97,6 +97,8 @@ const FollowingList = ({ route,navigation }: { route: any, navigation:any }) => 
 
   const renderItem = ({ item }: { item: Following }) => (
     <View style={styles.itemContainer}>
+      <View style={styles.profileContainer}>
+
       <Image
           source={
             item.profilePicture
@@ -106,6 +108,7 @@ const FollowingList = ({ route,navigation }: { route: any, navigation:any }) => 
           style={styles.profileImage}
         />
       <Text style={styles.username}>{item.username}</Text>
+      </View>
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
@@ -155,6 +158,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
     flex: 1,
+    width: "100%",
   },
   itemContainer: {
     flexDirection: "row",
@@ -165,8 +169,6 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 16,
     color: colors.white,
-    //near photo
-    width: "70%",
   },
   button: {
     padding: 5,
