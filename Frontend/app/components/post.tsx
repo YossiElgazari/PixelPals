@@ -10,6 +10,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { colors } from "../styles/themeStyles";
 import { postApi } from "../api/postApi";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 
 type PostProps = {
   post: {
@@ -27,8 +28,12 @@ type PostProps = {
   navigation: any;
 };
 
+
+
 const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
   const [isLiked, setIsLiked] = useState(post.isLikedByCurrentUser);
+  const { showActionSheetWithOptions } = useActionSheet();
+  const [loading, setLoading] = useState(false);
 
   const handleLike = async () => {
     try {
@@ -47,24 +52,79 @@ const Post: React.FC<PostProps> = ({ post, user, navigation }) => {
     }
   };
 
+  const openActionSheet = () => {
+    const options = ["Edit Post", "Delete Post", "Cancel"];
+    const destructiveButtonIndex = 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        destructiveButtonIndex,
+        destructiveColor: colors.primary,
+        containerStyle: styles.dotsMenu,
+        textStyle: styles.dotsText,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          navigation.navigate("EditPost", { post, navigation });
+        } else if (buttonIndex === 1) {
+          confirmAction("Delete Post");
+        }
+      }
+    );
+  };
+
+  const confirmAction = (action: string) => {
+    const options = ["Yes", "No"];
+    const destructiveButtonIndex = 1;
+    const cancelButtonIndex = 1;
+
+    showActionSheetWithOptions(
+      {
+        title: `Are you sure you want to ${action.toLowerCase()}?`,
+        titleTextStyle: styles.dotsTitleText,
+        textStyle: styles.dotsText,
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+        destructiveColor: colors.primary,
+        containerStyle: styles.dotsSecondMenu,
+      },
+      async (buttonIndex) => {
+        if (buttonIndex === 0) {
+          if (action === "Delete Post") {
+            try {
+              await postApi.deletePost(post._id);
+            } catch (error) {
+              console.log("Error deleting the post:", error);
+            }
+          }
+        }
+      }
+    );
+  };
+
+
   return (
     <View style={styles.postContainer}>
-      <TouchableOpacity
-        style={styles.userInfo}
-        onPress={() =>
+      <View style={styles.postHeader}>
+        <TouchableOpacity style={styles.userInfo} onPress={() =>
           navigation.navigate("UserProfile", { userId: post.owner })
-        }
-      >
-        <Image
-          source={
-            user.profilePicture
-              ? { uri: user.profilePicture }
-              : require("../../assets/defaultprofile.jpg")
-          }
-          style={styles.profilePic}
-        />
-        <Text style={styles.username}>{user.username}</Text>
-      </TouchableOpacity>
+        }>
+          <Image
+            source={
+              user.profilePicture
+                ? { uri: user.profilePicture }
+                : require("../../assets/defaultprofile.jpg")
+            }
+            style={styles.profilePic}
+          />
+          <Text style={styles.username}>{user.username}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={openActionSheet} >
+          <Icon name="ellipsis-v" size={22} color={colors.white} style={styles.dots} />
+        </TouchableOpacity>
+      </View>
       <Text style={styles.content}>{post.content}</Text>
       {post.photo && (
         <Image source={{ uri: post.photo }} style={styles.image} />
@@ -85,10 +145,20 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.grey,
     marginBottom: 10,
   },
+  postHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    paddingTop: 5,
+  },
+  dots: {
+    bottom: 5,
+    marginRight: 5,
+  },
   userInfo: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
   },
   profilePic: {
     width: 40,
@@ -106,7 +176,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.white,
     paddingHorizontal: 10,
-    paddingBottom: 10,
   },
   image: {
     width: "100%",
@@ -118,7 +187,51 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "center",
   },
-  likeButton: {},
+  likeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+  },
+  dotsMenu: {
+    backgroundColor: colors.background80,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopColor: colors.primary,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 5,
+  },
+  dotsText: {
+    color: "white",
+    fontSize: 18,
+    padding: 5,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    textAlign: "center",
+  },
+  dotsSecondMenu: {
+    backgroundColor: colors.background80,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderWidth: 1,
+    borderTopColor: colors.primary,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: 5,
+  },
+  dotsTitleText: {
+    color: "white",
+    fontSize: 16,
+    alignSelf: "center",
+  },
 });
 
 export default Post;

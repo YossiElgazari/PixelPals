@@ -6,6 +6,6 @@ export const postApi = {
     likePost: (postId: string) => clientApi.post(`/post/${postId}/like`),
     unlikePost: (postId: string) => clientApi.delete(`/post/${postId}/like`),
     deletePost: (postId: string) => clientApi.delete(`/post/${postId}`),
-    updatePost: (postId: string, data: { content: string }) => clientApi.put(`/post/${postId}`, data),
+    updatePost: (postId: string, data: { content?: string, photo?: string }) => clientApi.put(`/post/${postId}`, data),
     getAllUserPosts: (userId: string) => clientApi.get(`/post/user/${userId}`),
   };

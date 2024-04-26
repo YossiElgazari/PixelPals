@@ -15,17 +15,18 @@ import LoadingSpinner from "../components/loading"; // Import LoadingSpinner com
 import { colors } from "../styles/themeStyles";
 
 const AddPostScreen = () => {
-  const [pic, setPic] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleAddPost = async () => {
     setIsLoading(true);
     try {
-      const post = { content, pic };
+      const post = { content, photo: photo || "" };
+      console.log("Adding post:", post);
       await postApi.createPost(post);
       alert("Post added successfully!");
-      setPic(null);
+      setPhoto(null);
       setContent("");
     } catch (error) {
       console.log("Failed to add post:", error);
@@ -50,8 +51,9 @@ const AddPostScreen = () => {
       quality: 1,
     });
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setPic(result.assets[0].uri);
+    if (!result.canceled && result.assets.length > 0) {
+      console.log(result.assets[0].uri);
+      setPhoto(result.assets[0].uri);
     }
   };
 
@@ -62,7 +64,7 @@ const AddPostScreen = () => {
     >
       <View style={styles.container}>
         <Text style={styles.headerText}>Create a New Post</Text>
-        {pic && <Image source={{ uri: pic }} style={styles.previewImage} />}
+        {photo && <Image source={{ uri: photo }} style={styles.previewImage} />}
         <TextInput
           style={styles.input}
           onChangeText={setContent}

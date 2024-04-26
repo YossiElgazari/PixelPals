@@ -35,9 +35,10 @@ const BottomTabNavigator = () => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+        
         tabBarShowLabel: false,
         headerShown: false,
-        tabBarStyle: { backgroundColor: colors.background80 },
+        tabBarStyle: { backgroundColor: colors.background80, borderTopColor: colors.grey, borderTopWidth: 2},
       })}
     >
       <Tab.Screen name="HomeTab" component={HomeScreen} />
