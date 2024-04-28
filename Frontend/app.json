@@ -25,7 +25,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/PixelPalslogoclearv2.png",
         "backgroundColor": "#121212"
-      }
+      },
+      "package": "com.pixelpalsapp"
     },
     "web": {
       "favicon": "./assets/PixelPalslogoclearv3.png"

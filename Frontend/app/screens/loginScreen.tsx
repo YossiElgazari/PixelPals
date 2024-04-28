@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useAuth } from "../context/AuthContext";
 import MyButton from "../components/myButton";
 import LoadingSpinner from "../components/loading";
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -26,6 +27,36 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { onLogin } = useAuth();
+
+  useEffect(() => {
+    googleConfiguration();
+  }, []);
+  
+  const googleConfiguration = () => {
+    GoogleSignin.configure({
+      webClientId: '193860061803-s9fqn0v4b5rcjr7u5fhjdpsmkm62ib9a.apps.googleusercontent.com',
+      forceCodeForRefreshToken: true,
+      offlineAccess: true,
+    });
+  }
+
+  const onGoogleButtonPress = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const result = await GoogleSignin.signIn();
+      console.log(result);
+    } catch (error:any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        alert('User cancelled the login flow!');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        alert('Signin in progress');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        alert('Google Play services not available or outdated!');
+      } else {
+        console.error(error);
+      }
+    }
+  };
 
   const handleLogin = async () => {
     setLoading(true);
@@ -91,7 +122,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             name="google"
             backgroundColor={colors.background80}
             style={styles.button}
-            onPress={() => Alert.alert("Oops", "In Progress..")}
+            onPress={onGoogleButtonPress}
           >
             <Text style={styles.text}>Login with Google</Text>
           </Icon.Button>
