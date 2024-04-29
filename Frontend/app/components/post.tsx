@@ -189,6 +189,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.white,
     paddingHorizontal: 10,
+    marginBottom: 10,
   },
   image: {
     width: "100%",

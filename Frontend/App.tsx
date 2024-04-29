@@ -14,6 +14,7 @@ import UserProfileScreen from "./app/screens/userProfileScreen";
 import followersList from "./app/components/followersList";
 import followingList from "./app/components/followingList";
 import EditPostScreen from "./app/screens/editPostScreen";
+import ProfileScreen from "./app/screens/profileScreen";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -54,6 +55,7 @@ export const Layout = () => {
             <Stack.Screen name="Home" component={BottomTabNavigator} />
             <Stack.Screen name="UserProfile" component={UserProfileScreen} />
             <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
             <Stack.Screen name="EditPost" component={EditPostScreen} />
             <Stack.Screen name="followersList" component={followersList} />

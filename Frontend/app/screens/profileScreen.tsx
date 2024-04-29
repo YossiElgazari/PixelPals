@@ -25,6 +25,7 @@ import { UserModel } from "../models/userModel";
 import { PostType } from "../screens/homeScreen";
 import LoadingSpinner from "../components/loading";
 import Post from "../components/post";
+import {authApi} from "../api/authApi";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Profile">;
@@ -173,13 +174,19 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       );
       return;
     }
+  
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
     });
-    if (!result.canceled && result.assets[0].uri) {
-      setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
+  
+    if (!result.canceled && result.assets.length > 0) {
       try {
+        // Upload the selected image from the gallery
+        await authApi.uploadImage(result.assets[0].uri);
+        // Set the selected image URI in the component state or use it as needed
+        setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
+        // Update profile picture in the backend if needed
         await userApi.updateProfilePicture({
           profilePicture: result.assets[0].uri,
         });
@@ -202,9 +209,13 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       allowsEditing: true,
       aspect: [4, 3],
     });
-    if (!result.canceled && result.assets[0].uri) {
-      setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
+    if (!result.canceled && result.assets.length > 0) {
       try {
+        // Upload the taken photo
+        await authApi.uploadImage(result.assets[0].uri);
+        // Set the taken photo URI in the component state or use it as needed
+        setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
+        // Update profile picture in the backend if needed
         await userApi.updateProfilePicture({
           profilePicture: result.assets[0].uri,
         });
@@ -302,19 +313,23 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             textStyle={styles.textEditButton}
           />
         </View>
-        <FlatList
-          data={posts}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <Post
-              post={item}
-              user={userInfo}
-              navigation={navigation}
-            />
-          )}
-          onRefresh={onRefresh}
-          refreshing={refreshing}
-        />
+        {posts.length === 0 ? (
+          <Text style={styles.emptyText}>Upload Something</Text>
+        ) : (
+          <FlatList
+            data={posts}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <Post
+                post={item}
+                user={userInfo}
+                navigation={navigation}
+              />
+            )}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        )}
     </SafeAreaView>
   );
 };
@@ -446,6 +461,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  emptyText: {
+    color: "white",
+    fontSize: 18,
+    textAlign: "center",
+    paddingTop: 60,
   },
 });
 

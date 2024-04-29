@@ -36,11 +36,16 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const handleRegister = async () => {
     setLoading(true);
     try {
+      if (profilePic) {
+        // Upload the profile picture if it exists
+        await authApi.uploadImage(profilePic);
+      }
       const userData = { username, email, password };
       const result = await onRegister!(
         userData.username,
         userData.password,
-        userData.email
+        userData.email,
+        profilePic!
       );
       if (result && result.error) {
         console.log(result.msg);

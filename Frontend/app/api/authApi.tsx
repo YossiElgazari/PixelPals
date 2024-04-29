@@ -1,5 +1,6 @@
 import clientApi from "./clientApi";
 import { secureTokens, RemoveTokens } from "../utility/secureStorage";
+import * as FileSystem from 'expo-file-system';
 
 export const authApi = {
   register: async (data: {
@@ -56,6 +57,25 @@ export const authApi = {
         error.response ? error.response.data : error
       );
       throw error;
+    }
+  },
+  uploadImage: async (imageURI: string) => {
+    console.log('Uploading image:', imageURI);
+    try {
+      const fileUri = imageURI;
+      const response = await FileSystem.uploadAsync(clientApi.getUri() + "" + "/file/upload", fileUri, {
+        fieldName: 'file',
+        httpMethod: 'POST',
+        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+      });
+      console.log(JSON.stringify(response, null, 4));
+      if (response.status === 200) {
+        console.log('Upload successful');
+      } else {
+        console.log('Upload failed, status:', response.status);
+      }
+    } catch (error) {
+      console.log('Upload failed:', error);
     }
   },
 };

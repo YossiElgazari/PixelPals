@@ -3,7 +3,7 @@ import axios from "axios";
 import * as SecureStorage from "../utility/secureStorage";
 import { authApi } from "../api/authApi";
 import { userApi } from "../api/userApi";
-import  clientApi from "../api/clientApi";
+import clientApi from "../api/clientApi";
 
 export const setAuthToken = (accessToken: string) => {
   console.log("Setting auth token:", accessToken);
@@ -25,7 +25,8 @@ interface AuthProps {
   onRegister?: (
     username: string,
     password: string,
-    email: string
+    email: string,
+    profilePicture?: string
   ) => Promise<any>;
   onLogin?: (username: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: any) => {
             accessToken: null,
             authenticated: false,
           });
-          setAuthToken(''); 
+          setAuthToken('');
         }
       } catch (error) {
         console.log("Failed to fetch auth state:", error);
@@ -78,17 +79,21 @@ export const AuthProvider = ({ children }: any) => {
         });
       }
     };
-  
+
     fetchAuthState();
   }, []);
 
   const register = async (
     username: string,
     password: string,
-    email: string
+    email: string,
+    profilePicture?: string
   ) => {
     try {
-      const response = await authApi.register({ username, password, email });
+      if (!profilePicture) {
+        profilePicture = ""
+      }
+      const response = await authApi.register({ username, password, email, profilePicture });
       console.log("Register response:", response);
       return response;
     } catch (error: any) {

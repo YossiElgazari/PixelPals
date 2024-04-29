@@ -24,9 +24,11 @@ type Props = {
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
+  const [photo, setPhoto] = useState("");
   const [loading, setLoading] = useState(false);
-  const { onLogin } = useAuth();
+  const { onLogin, onRegister} = useAuth();
 
   useEffect(() => {
     googleConfiguration();
@@ -43,9 +45,22 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const onGoogleButtonPress = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const result = await GoogleSignin.signIn();
-      console.log(result);
-    } catch (error:any) {
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+      // Extract user details from Google userInfo
+      const { user } = userInfo;
+      console.log(user);
+      // Assuming you have access to the registration function from useAuth
+      const result = await onRegister!(user.name!, 'password', user.email, user.photo!);
+  
+      if (result && result.error) {
+        console.log(result.msg);
+      } else {
+        console.log("Registration successful!");
+        await onLogin!(user.name!, 'password');
+        navigation.navigate("Home");
+      }
+    } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         alert('User cancelled the login flow!');
       } else if (error.code === statusCodes.IN_PROGRESS) {

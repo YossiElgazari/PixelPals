@@ -8,14 +8,29 @@ import bodyParser from "body-parser";
 import { Express } from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
+import multer from "multer";
 
 const env = dotenv.config();
 if (env.error) {
   throw new Error("Failed to load the .env file");
 }
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+});
+
 const DATABASE_URL = process.env.DATABASE_URL;
 const app = express();
+
 
 if (process.env.NODE_ENV == "development") {
   const options = {
@@ -44,6 +59,14 @@ const initApp = () => {
     db.on("error", (err) => console.log(err));
     db.once("open", () => console.log("Database connected"));
     mongoose.connect(DATABASE_URL).then(() => {
+      app.post('/file/upload',  upload.single("file"), (req, res) => {
+        if (!req.file) {
+          // If no file is uploaded, return an error response
+          return res.status(400).json({ message: "No file uploaded" });
+        }
+        // If file uploaded successfully, send a success response
+        res.status(200).json({ message: "File uploaded successfully" });
+      });
       app.use(express.json());
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));

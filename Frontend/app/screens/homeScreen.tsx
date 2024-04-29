@@ -58,6 +58,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     setLoading(true);
     try {
       const response = await postApi.fetchPosts();
+      if (response.data.length === 0 || !response.data) {
+        setPosts([]);
+        return;
+      }
       const userResponses = await Promise.all(
         response.data.map((post: PostType) => userApi.getUserById(post.owner))
       );
