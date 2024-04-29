@@ -103,28 +103,46 @@ describe("User Authentication Tests", () => {
     console.log("Search Users Test Finish:\n", res.body);
   });
 
+  test("Get User By ID", async () => {
+    console.log("Get User By ID Test Start:\n", user);
+    const res = await request(app)
+      .get(`/user/${user._id}`)
+      .set("Authorization", `Bearer ${user.accessToken}`);
+    expect(res.statusCode).toEqual(200);
+    console.log("Get User By ID Test Finish:\n", res.body);
+  });
+
+  test("Get User Profile By ID", async () => {
+    console.log("Get User Profile By ID Test Start:\n", user);
+    const res = await request(app)
+      .get(`/user/profile/${user._id}`)
+      .set("Authorization", `Bearer ${user.accessToken}`);
+    expect(res.statusCode).toEqual(200);
+    console.log("Get User Profile By ID Test Finish:\n", res.body);
+  });
+
   test("Follow User", async () => {
     console.log("Follow User Test Start:\n", user);
     const res = await request(app)
-      .put(`/user/follow/66243bfd8e12617393c65900`)
+      .put(`/user/follow/USERIDCHANGEHERE`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(201);
     console.log("Follow User Test Finish:\n", res.body);
   });
 
-  // test("Unfollow User", async () => {
-  //   console.log("Unfollow User Test Start:\n", user);
-  //   const res = await request(app)
-  //     .put(`/user/unfollow/66243bfd8e12617393c65900`)
-  //     .set("Authorization", `Bearer ${user.accessToken}`);
-  //   expect(res.statusCode).toEqual(200);
-  //   console.log("Unfollow User Test Finish:\n", res.body);
-  // });
+  test("Unfollow User", async () => {
+    console.log("Unfollow User Test Start:\n", user);
+    const res = await request(app)
+      .put(`/user/unfollow/USERIDCHANGEHERE`)
+      .set("Authorization", `Bearer ${user.accessToken}`);
+    expect(res.statusCode).toEqual(200);
+    console.log("Unfollow User Test Finish:\n", res.body);
+  });
 
   test("Get Followers", async () => {
     console.log("Get Followers Test Start:\n", user);
     const res = await request(app)
-      .get(`/user/followers/66243bfd8e12617393c65900`)
+      .get(`/user/followers/USERIDCHANGEHERE`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(200);
     console.log("Get Followers Test Finish:\n", res.body);
@@ -133,7 +151,7 @@ describe("User Authentication Tests", () => {
   test("Get Following", async () => {
     console.log("Get Following Test Start:\n", user);
     const res = await request(app)
-      .get(`/user/following/66243bfd8e12617393c65900`)
+      .get(`/user/following/USERIDCHANGEHERE`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(200);
     console.log("Get Following Test Finish:\n", res.body);

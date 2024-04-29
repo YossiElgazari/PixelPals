@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import init from "../app";
 import User from "../models/userModel";
 import Post from "../models/postModel";
+import fs from "fs";
 
 let app: Express;
 
@@ -35,7 +36,7 @@ afterAll(async () => {
   await User.deleteMany({ username: user.username });
   await User.deleteMany({ username: "newname" });
   await Post.deleteMany({ content: "This is a test post" });
-  await mongoose.connection.close();  
+  await mongoose.connection.close();
 });
 
 describe("User Authentication Tests", () => {
@@ -62,14 +63,13 @@ describe("User Authentication Tests", () => {
   test("Token Expired", async () => {
     console.log("Token Expired Test Start:\n", user);
     console.log("Time out\n");
-    await new Promise((r) => setTimeout(r, 5000));  // Delay to simulate token expiration
+    await new Promise((r) => setTimeout(r, 5000)); // Delay to simulate token expiration
     const res = await request(app)
       .get("/user/profile")
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).not.toEqual(200);
     console.log("Token Expired Test Finish:\n", res.body);
-  }, 10000);  // Increase timeout to 10000 milliseconds (10 seconds)
-  
+  }, 10000); // Increase timeout to 10000 milliseconds (10 seconds)
 
   test("Refresh Token", async () => {
     console.log("Refresh Token Test Start:\n", user);
@@ -84,6 +84,17 @@ describe("User Authentication Tests", () => {
     console.log("Refresh Token Test Finish:\n", res.body);
   });
 
+  test("upload file", async () => {
+    console.log("Upload Photo Test Start:");
+    const filePath = `${__dirname}/cat.jpg`;
+    const rs = await fs.existsSync(filePath);
+    if (rs) {
+      const response = await request(app)
+        .post("/file/upload")
+        .attach("file", filePath);
+      expect(response.statusCode).toEqual(200);
+    }
+  });
 
   test("Logout User", async () => {
     console.log("Logout User Test Start:\n", user);
@@ -91,9 +102,8 @@ describe("User Authentication Tests", () => {
       .post("/auth/logout")
       .set("Authorization", `Bearer ${user.accessToken}`)
       .send({ refreshToken: user.refreshToken });
-      console.log("Logout User Test Finish:\n", res.body);
+    console.log("Logout User Test Finish:\n", res.body);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({ message: "User logged out successfully" });
-
   });
 });
