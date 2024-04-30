@@ -28,6 +28,7 @@ const upload = multer({
   storage: storage,
 });
 
+const UPLOADS_URL = "http://192.168.1.23:3000/uploads/";
 const DATABASE_URL = process.env.DATABASE_URL;
 const app = express();
 
@@ -62,10 +63,10 @@ const initApp = () => {
       app.post('/file/upload',  upload.single("file"), (req, res) => {
         if (!req.file) {
           // If no file is uploaded, return an error response
-          return res.status(400).json({ message: "No file uploaded" });
+          return res.status(400).json({message: "No file uploaded"} );
         }
         // If file uploaded successfully, send a success response
-        res.status(200).json({ message: "File uploaded successfully" });
+        res.status(200).json({newfilename: UPLOADS_URL + req.file.originalname});
       });
       app.use(express.json());
       app.use(bodyParser.json());
@@ -73,6 +74,7 @@ const initApp = () => {
       app.use("/user", userRoutes);
       app.use("/post", postRoutes);
       app.use("/auth", authRoutes);
+      app.use("/uploads", express.static("uploads"));
       resolve(app);
     })
   });

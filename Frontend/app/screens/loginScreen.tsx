@@ -75,12 +75,17 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleLogin = async () => {
     setLoading(true);
+    try {
     const result = await onLogin!(username, password);
     navigation.navigate("Home");
     if (result && result.error) {
       console.log(result.msg);
     }
+  } catch (error: any) {
+    console.log(error);
+  } finally {
     setLoading(false);
+  }
   };
 
   const handleForgotPassword = () => {

@@ -22,6 +22,9 @@ package-lock.json
 # test coverage
 /coverage
 
+
+uploads
+
 # Logs
 *.log
 

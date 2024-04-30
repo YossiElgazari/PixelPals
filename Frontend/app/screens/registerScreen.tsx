@@ -37,8 +37,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     setLoading(true);
     try {
       if (profilePic) {
-        // Upload the profile picture if it exists
-        await authApi.uploadImage(profilePic);
+        const newfilename = await authApi.uploadImage(profilePic);
+        setProfilePic(newfilename);
       }
       const userData = { username, email, password };
       const result = await onRegister!(

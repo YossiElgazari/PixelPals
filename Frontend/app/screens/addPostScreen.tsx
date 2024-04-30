@@ -72,6 +72,28 @@ const AddPostScreen = () => {
   }
 };
 
+const takePhoto = async () => {
+  const permissionResult =
+    await ImagePicker.requestCameraPermissionsAsync();
+  if (!permissionResult.granted) {
+    alert(
+      "Permission to access camera is denied."
+    );
+    return;
+  }
+  const result = await ImagePicker.launchCameraAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  if (!result.canceled && result.assets.length > 0) {
+    setPhoto(result.assets[0].uri);
+}
+};
+
+
   return (
     <ImageBackground
       source={require("../../assets/imagebg.png")}
@@ -93,6 +115,8 @@ const AddPostScreen = () => {
         ) : (
           <>
             <MyButton text="Select Image" onPress={pickImage}/>
+            <View style={{ height: 10 }}></View>
+            <MyButton text="Take Photo" onPress={takePhoto}/>
             <MyButton text="Add Post" onPress={handleAddPost} buttonStyle={styles.addButton}/>
           </>
         )}

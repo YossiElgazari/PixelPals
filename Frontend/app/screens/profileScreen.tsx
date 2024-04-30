@@ -183,12 +183,12 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     if (!result.canceled && result.assets.length > 0) {
       try {
         // Upload the selected image from the gallery
-        await authApi.uploadImage(result.assets[0].uri);
+        const newfilename = await authApi.uploadImage(result.assets[0].uri);
         // Set the selected image URI in the component state or use it as needed
-        setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
+        setUserInfo({ ...userInfo, profilePicture: newfilename });
         // Update profile picture in the backend if needed
         await userApi.updateProfilePicture({
-          profilePicture: result.assets[0].uri,
+          profilePicture: newfilename,
         });
       } catch (error) {
         console.log("Failed to update profile image:", error);
@@ -212,12 +212,12 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     if (!result.canceled && result.assets.length > 0) {
       try {
         // Upload the taken photo
-        await authApi.uploadImage(result.assets[0].uri);
+        const newfilename = await authApi.uploadImage(result.assets[0].uri);
         // Set the taken photo URI in the component state or use it as needed
-        setUserInfo({ ...userInfo, profilePicture: result.assets[0].uri });
+        setUserInfo({ ...userInfo, profilePicture: newfilename });
         // Update profile picture in the backend if needed
         await userApi.updateProfilePicture({
-          profilePicture: result.assets[0].uri,
+          profilePicture: newfilename,
         });
       } catch (error) {
         console.log("Failed to update profile image:", error);
@@ -257,7 +257,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
               source={
                 userInfo.profilePicture
                   ? { uri: userInfo.profilePicture }
-                  : require("../../assets/defaultprofile.jpg") // Use the default image if no profilePicture is present
+                  : require("../../assets/defaultprofile.jpg") 
               }
               style={styles.profileImage}
             />
