@@ -6,8 +6,6 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-  Button,
-  Alert,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { authApi } from "../api/authApi";
@@ -87,6 +85,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.maincontainer}>
+      {loading && <LoadingSpinner />}
       <View style={styles.container}>
         <Text style={styles.headline}>Create Account</Text>
         <View style={styles.imageContainer}>

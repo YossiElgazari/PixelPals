@@ -10,10 +10,10 @@ import { RootStackParamList } from '../../App';
 
 type Props = {
     navigation: NativeStackNavigationProp<RootStackParamList, "EditPost">;
-  };
+};
 
 const EditPostScreen = ({ route, navigation }: { route: any, navigation: any }) => {
-    const { postId, content, photo } = route.params.post;
+    const { _id, content, photo } = route.params.post;
     const [editedContent, setEditedContent] = useState(content);
     const [editedPhoto, setEditedPhoto] = useState(photo);
 
@@ -49,27 +49,35 @@ const EditPostScreen = ({ route, navigation }: { route: any, navigation: any }) 
 
     const handleUpdatePost = async () => {
         try {
-            if (editedContent !== content) {
-                await postApi.updatePost(postId, { content: editedContent });
+            if (editedContent === content && editedPhoto === photo) {
+                alert('No changes made to post');
+                navigation.goBack();
+                return;
             }
-            if (editedPhoto !== photo) {
-                await postApi.updatePost(postId, { photo: editedPhoto });
+            if (editedPhoto === photo) {
+                const result = await postApi.updatePost(_id, { content: editedContent, photo: editedPhoto });
+                if (!result) {
+                    console.error('Error updating post');
+                    return;
+                }
             }
             console.log('Post updated successfully');
+            navigation.goBack();
         } catch (error) {
             console.error('Error updating post:', error);
         }
     };
 
+
     return (
         <ScrollView style={styles.maincontainer}>
             <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-        >
-          <Icon name="arrow-left" size={22} color="white" />
-        </TouchableOpacity>
-        </View>
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                >
+                    <Icon name="arrow-left" size={22} color="white" />
+                </TouchableOpacity>
+            </View>
             <View style={styles.container}>
                 <Text style={styles.headline}>Edit Post</Text>
                 <Text style={styles.label}>Content:</Text>
@@ -158,7 +166,7 @@ const styles = StyleSheet.create({
         width: 300,
         height: 300,
         marginBottom: 20,
-        borderRadius: 10, // Add a border radius for a softer look
+        borderRadius: 10,
     },
 });
 

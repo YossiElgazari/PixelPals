@@ -57,7 +57,6 @@ const FollowerList = ({
 
       fetchFollowers();
 
-      // Clean up function
       return () => {};
     }, [userId])
   );
@@ -143,7 +142,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // Center items horizontally
+    justifyContent: "center", 
     padding: 10,
     backgroundColor: colors.background80,
   },

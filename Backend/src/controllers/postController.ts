@@ -5,15 +5,14 @@ import Post, { IPost } from "../models/postModel";
 
 class PostController extends BaseController<IPost> {
   constructor() {
-    super(Post); // Pass the Post model to the BaseController
+    super(Post); 
   }
 
   async update(req: AuthRequest, res: Response): Promise<void> {
     try {
       const postId = req.params.id;
-      await this.itemModel.findByIdAndUpdate(postId, req.body, {
-        new: true,
-      });
+      console.log("REQ BODY\n", postId, req.body);
+      await this.itemModel.findByIdAndUpdate(postId, req.body);
       res.status(200).json({ message: "Post updated successfully" });
     } catch (error) {
       console.error("Error updating post:", error);

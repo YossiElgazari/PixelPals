@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, Alert, Image, TouchableOpacity, StyleSheet, ScrollView
+  View, Text, TextInput, Alert, StyleSheet, ScrollView
 } from 'react-native';
 import { userApi } from '../api/userApi';
 import { useNavigation } from '@react-navigation/native';

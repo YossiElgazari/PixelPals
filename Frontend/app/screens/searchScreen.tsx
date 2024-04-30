@@ -10,7 +10,7 @@ import {
   Touchable,
   TouchableOpacity,
 } from "react-native";
-import { userApi } from "../api/userApi"; // Import userApi
+import { userApi } from "../api/userApi"; 
 import { RootStackParamList } from "../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -26,21 +26,21 @@ type Props = {
 
 const SearchScreen: React.FC<Props> = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<User[]>([]); // Update to specify the User type
+  const [searchResults, setSearchResults] = useState<User[]>([]); 
 
   // Function to handle searching users
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
     if (query.length >= 1) {
       try {
-        const response = await userApi.searchUsers(query); // Call the searchUsers function from the userApi
-        setSearchResults(response.data); // Assuming the API response structure has a 'data' field with search results
+        const response = await userApi.searchUsers(query); 
+        setSearchResults(response.data); 
       } catch (error) {
         console.log("Search failed:", error);
-        setSearchResults([]); // Reset the search results on error
+        setSearchResults([]); 
       }
     } else {
-      setSearchResults([]); // Clear results if the query is too short
+      setSearchResults([]); 
     }
   };
 

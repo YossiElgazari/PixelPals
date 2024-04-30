@@ -70,14 +70,13 @@ class UserController extends BaseController<IUser> {
   async getuserprofilebyid(req: AuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.params.userId;
-      console.log("userId", userId);
       const user = await User.findById(userId);
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;
       }
       const userPosts = await Post.find({ owner: userId }).sort({ createdAt: -1 });
-      const postsCount = await Post.countDocuments({ user: userId });
+      const postsCount = await Post.countDocuments({ owner: userId });
       const followersCount = await Follower.countDocuments({ following: userId });
       const followingCount = await Follower.countDocuments({ user: userId });
       res.status(200).json({
@@ -257,8 +256,8 @@ class UserController extends BaseController<IUser> {
   
 
   async followUser(req: AuthRequest, res: Response): Promise<void> {
-    const userId = req.user._id; // The authenticated user's ID
-    const { userId: followUserId } = req.params; // The user to follow
+    const userId = req.user._id; 
+    const { userId: followUserId } = req.params; 
 
     try {
       if (userId === followUserId) {
@@ -291,8 +290,8 @@ class UserController extends BaseController<IUser> {
   }
 
   async unfollowUser(req: AuthRequest, res: Response): Promise<void> {
-    const userId = req.user._id; // The authenticated user's ID
-    const { userId: followUserId } = req.params; // The user to unfollow
+    const userId = req.user._id; 
+    const { userId: followUserId } = req.params; 
 
     try {
       const follow = await Follower.findOneAndDelete({

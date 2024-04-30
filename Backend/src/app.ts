@@ -65,7 +65,7 @@ const initApp = () => {
           // If no file is uploaded, return an error response
           return res.status(400).json({message: "No file uploaded"} );
         }
-        // If file uploaded successfully, send a success response
+        // If file uploaded successfully, return the file URL
         res.status(200).json({newfilename: UPLOADS_URL + req.file.originalname});
       });
       app.use(express.json());

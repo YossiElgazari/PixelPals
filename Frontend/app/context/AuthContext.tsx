@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: any) => {
       try {
         const accessToken = await SecureStorage.getAccessToken();
         if (accessToken) {
-          setAuthToken(accessToken);  // Set the token in global headers
+          setAuthToken(accessToken);  
           const response = await userApi.getUserId();
           const userId = response.data.userId;
           setAuthState({

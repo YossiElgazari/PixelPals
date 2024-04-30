@@ -1,6 +1,5 @@
 import clientApi, { API_URL } from "./clientApi";
 import { secureTokens, RemoveTokens } from "../utility/secureStorage";
-import * as FileSystem from 'expo-file-system';
 
 export const authApi = {
   register: async (data: {

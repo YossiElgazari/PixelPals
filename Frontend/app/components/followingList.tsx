@@ -56,9 +56,9 @@ const FollowingList = ({ route,navigation }: { route: any, navigation:any }) => 
 
       fetchFollowing();
 
-      // Clean up function
+      
       return () => {};
-    }, [userId]) // Add userId as a dependency
+    }, [userId]) 
   );
 
   const handleFollow = async (followingId: string) => {
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // Center items horizontally
+    justifyContent: "center", 
     padding: 10,
     backgroundColor: colors.background80,
   },

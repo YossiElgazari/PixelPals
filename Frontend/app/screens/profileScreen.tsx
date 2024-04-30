@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   Alert,
@@ -313,6 +312,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             textStyle={styles.textEditButton}
           />
         </View>
+        {loading ? <LoadingSpinner /> : null}
         {posts.length === 0 ? (
           <Text style={styles.emptyText}>Upload Something</Text>
         ) : (

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ImageBackground,
   Image,
   TextInput,
@@ -11,7 +10,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { postApi } from "../api/postApi";
 import MyButton from "../components/myButton";
-import LoadingSpinner from "../components/loading"; // Import LoadingSpinner component
+import LoadingSpinner from "../components/loading"; 
 import { colors } from "../styles/themeStyles";
 import { useFocusEffect } from "@react-navigation/native";
 

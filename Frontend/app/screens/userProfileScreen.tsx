@@ -5,7 +5,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { userApi } from "../api/userApi";
 import { colors } from "../styles/themeStyles";
 import { RootStackParamList } from "../../App";
-import LoadingSpinner from "../components/loading";
 import MyButton from "../components/myButton";
 import { useAuth } from "../context/AuthContext";
 import { PostType } from "../screens/homeScreen";
@@ -44,6 +43,7 @@ const UserProfileScreen: React.FC<UserProfileScreenProps> = ({ navigation, route
     }
 
     const checkIfBeingFollowed = async () => {
+      if (isCurrentUserProfile) return;
       setLoading(true);
       try {
         const response = await userApi.getFollowers(userId);
