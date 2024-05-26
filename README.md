@@ -11,7 +11,7 @@ PixelPals is a social media platform designed for gamers, offering a unique spac
 
 ## Technologies Used
 
-- **Frontend**: TypeScript, React, CSS
+- **Frontend**: TypeScript, React, CSS, Expo
 - **Backend**: Node.js, Express, MongoDB
 
 ## Getting Started
