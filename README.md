@@ -9,6 +9,13 @@ PixelPals is a social media platform designed for gamers, offering a unique spac
 - **Social Interaction**: Follow other users, like posts and explore.
 - **Discover**: Find new gamers and content with search functionality.
 
+## Focus on Authentication
+
+PixelPals prioritizes user security and seamless access through robust authentication mechanisms:
+- Secure login and registration with encrypted passwords
+- JWT (JSON Web Tokens) for session management
+- OAuth integration for Google Sign-In
+
 ## Technologies Used
 
 - **Frontend**: TypeScript, React, CSS, Expo
@@ -60,13 +67,6 @@ PixelPals is a social media platform designed for gamers, offering a unique spac
    ```
 4. Open your browser and navigate to `http://localhost:3000`.
 
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
-
-## License
-
-This project is licensed under the MIT License.
 
 ## Contact
 
