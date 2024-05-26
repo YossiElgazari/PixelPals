@@ -18,7 +18,7 @@ PixelPals prioritizes user security and seamless access through robust authentic
 
 ## Technologies Used
 
-- **Frontend**: TypeScript, React, CSS, Expo
+- **Frontend**: TypeScript, React Native, CSS, Expo
 - **Backend**: Node.js, Express, MongoDB
 
 ## Getting Started
