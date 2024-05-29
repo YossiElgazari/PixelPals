@@ -20,4 +20,5 @@ PixelPals prioritizes user security and seamless access through robust authentic
 
 - **Frontend**: TypeScript, React Native, CSS, Expo
 - **Backend**: Node.js, Express, MongoDB
+  
 For any questions or inquiries, please contact [yossielg98@gmail.com].
