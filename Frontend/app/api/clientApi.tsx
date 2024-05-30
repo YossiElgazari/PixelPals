@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getRefreshToken, secureTokens } from "../utility/secureStorage";
 
-export const API_URL = "http://192.168.1.23:3000";
+export const API_URL = "http://10.200.202.59:3000";
 
 const clientApi = axios.create({
   baseURL: API_URL,

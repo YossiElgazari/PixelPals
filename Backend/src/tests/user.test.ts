@@ -23,23 +23,35 @@ const user: TestUser = {
   email: "admin@admin.com",
 };
 
+const user2: TestUser = {
+  username: "admin2",
+  password: "admin2",
+  email: "admin2@admin2.com",
+};
+
 beforeAll(async () => {
   app = await init();
-  await User.deleteMany({ username: user.username });
-  await User.deleteMany({ username: "yossinew" });
   console.log("Before All");
 });
 
 afterAll(async () => {
   console.log("After All");
-
+  await User.deleteMany({ username: user.username });
+  await User.deleteMany({ username: user2.username });
   await mongoose.connection.close();
 });
 
 describe("User Authentication Tests", () => {
-  test("Register User", async () => {
+  test("Register User1", async () => {
     console.log("Register User Test Start:\n", user);
     const res = await request(app).post("/auth/register").send(user);
+    expect(res.statusCode).toEqual(201);
+    console.log("Register User Test Finish:\n", res.body);
+  });
+
+  test("Register User2", async () => {
+    console.log("Register User Test Start:\n", user);
+    const res = await request(app).post("/auth/register").send(user2);
     expect(res.statusCode).toEqual(201);
     console.log("Register User Test Finish:\n", res.body);
   });
@@ -65,8 +77,8 @@ describe("User Authentication Tests", () => {
     console.log("Get User Profile Test:\n", res.body);
     expect(res.statusCode).toEqual(200);
     user.profilePicture = res.body.profilePicture;
-    user.bio = res.body.bio;
-    user._id = res.body._id;
+    user.bio = res.body.user.bio;
+    user._id = res.body.user._id;
     console.log("Get User Profile Test Finish:\n", res.body);
   });
 
@@ -76,7 +88,7 @@ describe("User Authentication Tests", () => {
       .put("/user/profile")
       .set("Authorization", `Bearer ${user.accessToken}`)
       .send({
-        username: "yossinew",
+        username: "updatedadmin",
         email: "yossi@newemail.com",
         bio: "This is a new bio",
       });
@@ -97,9 +109,10 @@ describe("User Authentication Tests", () => {
   test("Search Users", async () => {
     console.log("Search Users Test Start:\n", user);
     const res = await request(app)
-      .get("/user/search/y")
+      .get(`/user/search/${user2.username}`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(200);
+    user2._id = res.body[0]._id;
     console.log("Search Users Test Finish:\n", res.body);
   });
 
@@ -124,7 +137,7 @@ describe("User Authentication Tests", () => {
   test("Follow User", async () => {
     console.log("Follow User Test Start:\n", user);
     const res = await request(app)
-      .put(`/user/follow/USERIDCHANGEHERE`)
+      .put(`/user/follow/${user2._id}`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(201);
     console.log("Follow User Test Finish:\n", res.body);
@@ -133,7 +146,7 @@ describe("User Authentication Tests", () => {
   test("Unfollow User", async () => {
     console.log("Unfollow User Test Start:\n", user);
     const res = await request(app)
-      .put(`/user/unfollow/USERIDCHANGEHERE`)
+      .put(`/user/unfollow/${user2._id}`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(200);
     console.log("Unfollow User Test Finish:\n", res.body);
@@ -142,7 +155,7 @@ describe("User Authentication Tests", () => {
   test("Get Followers", async () => {
     console.log("Get Followers Test Start:\n", user);
     const res = await request(app)
-      .get(`/user/followers/USERIDCHANGEHERE`)
+      .get(`/user/followers/${user._id}`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(200);
     console.log("Get Followers Test Finish:\n", res.body);
@@ -151,7 +164,7 @@ describe("User Authentication Tests", () => {
   test("Get Following", async () => {
     console.log("Get Following Test Start:\n", user);
     const res = await request(app)
-      .get(`/user/following/USERIDCHANGEHERE`)
+      .get(`/user/following/${user._id}`)
       .set("Authorization", `Bearer ${user.accessToken}`);
     expect(res.statusCode).toEqual(200);
     console.log("Get Following Test Finish:\n", res.body);

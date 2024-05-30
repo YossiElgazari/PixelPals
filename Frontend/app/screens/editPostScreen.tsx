@@ -49,24 +49,34 @@ const EditPostScreen = ({ route, navigation }: { route: any, navigation: any }) 
 
     const handleUpdatePost = async () => {
         try {
+            // Check if there are any changes made to the post
             if (editedContent === content && editedPhoto === photo) {
                 alert('No changes made to post');
                 navigation.goBack();
                 return;
             }
-            if (editedPhoto === photo) {
-                const result = await postApi.updatePost(_id, { content: editedContent, photo: editedPhoto });
-                if (!result) {
-                    console.error('Error updating post');
-                    return;
-                }
+    
+            // Prepare the data to be updated
+            const updatedData = {
+                content: editedContent,
+                photo: editedPhoto
+            };
+    
+            // Call the updatePost API
+            const result = await postApi.updatePost(_id, updatedData);
+    
+            if (!result) {
+                console.error('Error updating post');
+                return;
             }
-            console.log('Post updated successfully');
+    
+            // Navigate back after successful update
             navigation.goBack();
         } catch (error) {
             console.error('Error updating post:', error);
         }
     };
+    
 
 
     return (

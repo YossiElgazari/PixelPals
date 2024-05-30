@@ -28,7 +28,7 @@ const upload = multer({
   storage: storage,
 });
 
-const UPLOADS_URL = "http://192.168.1.23:3000/uploads/";
+const UPLOADS_URL = "http://10.200.202.59:3000/uploads/";
 const DATABASE_URL = process.env.DATABASE_URL;
 const app = express();
 

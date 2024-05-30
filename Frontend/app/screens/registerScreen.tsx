@@ -34,38 +34,35 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const handleRegister = async () => {
     setLoading(true);
     try {
+      let uploadedProfilePic = profilePic;
       if (profilePic) {
-        const newfilename = await authApi.uploadImage(profilePic);
-        setProfilePic(newfilename);
+        const newFilename = await authApi.uploadImage(profilePic);
+        console.log("newFilename:", newFilename);
+        uploadedProfilePic = newFilename;
       }
+
       const userData = { username, email, password };
-      const result = await onRegister!(
-        userData.username,
-        userData.password,
-        userData.email,
-        profilePic!
-      );
+      const result = await onRegister!(userData.username, userData.password, userData.email, uploadedProfilePic!);
+
       if (result && result.error) {
         console.log(result.msg);
       } else {
-        const loginResult = await onLogin!(
-          userData.username,
-          userData.password
-        );
-        navigation.navigate("Home");
+        const loginResult = await onLogin!(userData.username, userData.password);
         if (loginResult && loginResult.error) {
           console.log(loginResult.msg);
+        } else {
+          navigation.navigate("Home");
         }
       }
     } catch (error) {
       console.log("Failed to register:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const pickImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
       alert("You've refused to allow this app to access your photos!");
       return;
@@ -78,9 +75,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       quality: 1,
     });
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
+    if (!result.canceled && result.assets.length > 0) {
       setProfilePic(result.assets[0].uri);
     }
+    console.log("After Pick ", profilePic);
   };
 
   return (
