@@ -1,7 +1,3 @@
-Sure, here is the complete README.md for PixelPals:
-
----
-
 # PixelPals
 
 PixelPals is a social media platform designed for gamers, offering a unique space to share gaming experiences, follow friends, and engage with the gaming community.
